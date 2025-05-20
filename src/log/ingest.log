@@ -31,3 +31,6 @@
 2025-05-20 07:13:02,261 INFO Training lightgbm with {'num_leaves': 38, 'max_depth': 4, 'learning_rate': 0.07987690738513692, 'n_estimators': 760, 'subsample': 0.8311769612852165, 'colsample_bytree': 0.8108861849181737, 'reg_alpha': 0.48565643432723143, 'reg_lambda': 0.9176736393648338, 'min_child_samples': 13}
 2025-05-20 07:13:02,424 INFO Saved model to models/lightgbm.pkl
 2025-05-20 07:13:02,429 INFO Metrics: {'rmse': 348.6592129342404, 'mae': 226.38403732821044, 'r2': 0.539972564555816}
+2025-05-20 07:29:33,043 INFO Training catboost with {'depth': 4, 'learning_rate': 0.0525085976173121, 'iterations': 747, 'l2_leaf_reg': 1.4067709317318904, 'random_strength': 0.9514287319983072, 'bagging_temperature': 0.8163834190043309, 'border_count': 210, 'rsm': 0.843864375655151}
+2025-05-20 07:29:34,557 INFO Saved model to models/catboost.pkl
+2025-05-20 07:29:34,561 INFO Metrics: {'rmse': 439.5725053900549, 'mae': 323.04126692713004, 'r2': 0.2687893931774086}
