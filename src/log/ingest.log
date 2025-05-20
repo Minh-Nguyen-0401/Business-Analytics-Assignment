@@ -1,0 +1,33 @@
+2025-05-20 05:26:30,548 INFO Finished generating time-based features
+2025-05-20 05:26:30,556 INFO Finished generating agg_facts this year/quarter
+2025-05-20 05:26:30,593 INFO Finished generating mass_gen features
+2025-05-20 05:26:30,593 INFO Finished generating RSI features
+2025-05-20 05:26:30,597 INFO Finished generating Promo Indicators
+2025-05-20 05:26:30,618 INFO Finished shifting back predictive features 12 months
+2025-05-20 05:26:30,629 INFO Finished generating time-based features
+2025-05-20 05:26:30,661 INFO Finished generating agg_facts this year/quarter
+2025-05-20 05:26:31,487 INFO Finished generating mass_gen features
+2025-05-20 05:26:31,554 INFO Finished generating RSI features
+2025-05-20 05:26:31,559 INFO Finished generating Promo Indicators
+2025-05-20 05:26:33,101 INFO Finished shifting back predictive features 12 months
+2025-05-20 05:26:48,099 INFO Finished generating time-based features
+2025-05-20 05:26:48,107 INFO Finished generating agg_facts this year/quarter
+2025-05-20 05:26:48,142 INFO Finished generating mass_gen features
+2025-05-20 05:26:48,142 INFO Finished generating RSI features
+2025-05-20 05:26:48,144 INFO Finished generating Promo Indicators
+2025-05-20 05:26:48,157 INFO Finished shifting back predictive features 12 months
+2025-05-20 05:26:48,182 INFO Finished generating time-based features
+2025-05-20 05:26:48,221 INFO Finished generating agg_facts this year/quarter
+2025-05-20 05:26:49,025 INFO Finished generating mass_gen features
+2025-05-20 05:26:49,111 INFO Finished generating RSI features
+2025-05-20 05:26:49,122 INFO Finished generating Promo Indicators
+2025-05-20 05:26:50,664 INFO Finished shifting back predictive features 12 months
+2025-05-20 05:40:20,312 INFO Training lightgbm with {'num_leaves': 38, 'max_depth': 4, 'learning_rate': 0.07987690738513692, 'n_estimators': 760, 'subsample': 0.8311769612852165, 'colsample_bytree': 0.8108861849181737, 'reg_alpha': 0.48565643432723143, 'reg_lambda': 0.9176736393648338, 'min_child_samples': 13}
+2025-05-20 05:40:20,547 INFO Saved model to models/lightgbm.pkl
+2025-05-20 05:40:20,551 INFO Metrics: {'rmse': 344.3854454982272, 'mae': 204.06168947295748, 'r2': 0.5511812207605019}
+2025-05-20 07:10:16,285 INFO Training lightgbm with {'num_leaves': 31, 'max_depth': 3, 'learning_rate': 0.12358480135320798, 'n_estimators': 532, 'subsample': 0.7077251073851982, 'colsample_bytree': 0.7522613452307074, 'reg_alpha': 0.4577046131136939, 'reg_lambda': 0.5595884769933148, 'min_child_samples': 6}
+2025-05-20 07:10:16,404 INFO Saved model to models/lightgbm.pkl
+2025-05-20 07:10:16,408 INFO Metrics: {'rmse': 439.08774347261885, 'mae': 319.25088246888134, 'r2': 0.2704012665315978}
+2025-05-20 07:13:02,261 INFO Training lightgbm with {'num_leaves': 38, 'max_depth': 4, 'learning_rate': 0.07987690738513692, 'n_estimators': 760, 'subsample': 0.8311769612852165, 'colsample_bytree': 0.8108861849181737, 'reg_alpha': 0.48565643432723143, 'reg_lambda': 0.9176736393648338, 'min_child_samples': 13}
+2025-05-20 07:13:02,424 INFO Saved model to models/lightgbm.pkl
+2025-05-20 07:13:02,429 INFO Metrics: {'rmse': 348.6592129342404, 'mae': 226.38403732821044, 'r2': 0.539972564555816}

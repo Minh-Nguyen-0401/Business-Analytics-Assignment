@@ -1,0 +1,8 @@
+ingest:
+  original_path: D:\Study\UNIVERSITY\THIRD YEAR\Business Analytics\ASSIGNMENT 1_ Sales Data Analysis\original_data
+  supp_path: D:\Study\UNIVERSITY\THIRD YEAR\Business Analytics\ASSIGNMENT 1_ Sales Data Analysis\supplementary_data
+
+preprocess:
+  winsorize: True
+  use_vif: True
+  use_mi: True

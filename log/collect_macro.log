@@ -1,0 +1,23 @@
+2025-05-17 17:06:00,304 INFO Fetching retail_sales_apparel (RSCCAS)
+2025-05-17 17:06:01,156 INFO Fetching inv_sales_ratio_apparel (MRTSIR448USS)
+2025-05-17 17:06:01,766 INFO Fetching pce_apparel (DCAFRC1A027NBEA)
+2025-05-17 17:06:02,308 INFO Fetching real_pce_apparel (DCAFRX1A020NBEA)
+2025-05-17 17:06:02,805 INFO Fetching cotton_price (PCOTTINDUSDM)
+2025-05-17 17:06:03,358 INFO Fetching raw_cotton_ppi (WPU01510101)
+2025-05-17 17:06:03,948 INFO Fetching gdp (GDPC1)
+2025-05-17 17:06:04,432 INFO Fetching cpi_u (CPIAUCSL)
+2025-05-17 17:06:05,005 INFO Fetching oil (DCOILWTICO)
+2025-05-17 17:06:06,123 INFO Fetching gold (GOLDAMGBD228NLBM)
+2025-05-17 17:06:06,629 ERROR gold (GOLDAMGBD228NLBM) failed: Bad Request.  The series does not exist.
+2025-05-17 17:06:06,629 INFO Fetching usd_index (DTWEXBGS)
+2025-05-17 17:06:07,573 INFO Fetching sp500 (SP500)
+2025-05-17 17:06:08,313 INFO Fetching umich_sentiment (UMCSENT)
+2025-05-17 17:06:08,872 INFO Fetching fed_funds_rate (FEDFUNDS)
+2025-05-17 17:06:09,515 INFO Fetching unemployment_rate (UNRATE)
+2025-05-17 17:06:10,069 INFO Fetching industrial_prod (INDPRO)
+2025-05-17 17:06:10,659 INFO Fetching import_price_all (IMPITW)
+2025-05-17 17:06:11,139 ERROR import_price_all (IMPITW) failed: Bad Request.  The series does not exist.
+2025-05-17 17:06:11,145 INFO Finished downloading data for industry and macro indicators
+2025-05-17 17:06:11,896 INFO Finished downloading data for gold
+2025-05-17 17:06:12,620 INFO Finished downloading data for tickers
+2025-05-17 17:06:12,628 INFO Finished saving data
