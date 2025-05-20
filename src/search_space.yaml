@@ -302,10 +302,10 @@ results:
     - Budget_USD_std_this_year_diff_12
     params:
       depth: 4
-      learning_rate: 0.0525085976173121
-      iterations: 747
-      l2_leaf_reg: 1.4067709317318904
-      random_strength: 0.9514287319983072
-      bagging_temperature: 0.8163834190043309
-      border_count: 210
-      rsm: 0.843864375655151
+      learning_rate: 0.17453335407191212
+      iterations: 228
+      l2_leaf_reg: 2.1085474009287153
+      random_strength: 0.3386206089072426
+      bagging_temperature: 0.9483789574340495
+      border_count: 157
+      rsm: 0.9180833621861976

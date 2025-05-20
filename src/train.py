@@ -2,10 +2,11 @@ import os, sys, yaml, logging, joblib
 import pandas as pd, numpy as np
 import matplotlib.pyplot as plt
 from typing import Union
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, mean_absolute_percentage_error
 import lightgbm as lgb
 from catboost import CatBoostRegressor
 import logging
+import json
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 root = os.path.dirname(CURRENT_DIR)
@@ -52,9 +53,14 @@ class ModelTrainer:
         yt, yp = np.array(y_true), np.array(y_pred)
         m = {'rmse': mean_squared_error(yt, yp, squared=False),
              'mae': mean_absolute_error(yt, yp),
-             'r2': r2_score(yt, yp)}
+             'r2': r2_score(yt, yp),
+             'mape': mean_absolute_percentage_error(yt, yp)}
         logging.info(f"Metrics: {m}")
         evdir = os.path.join(root, 'models', f'{self.model_name}_evaluation')
+        # save metrics to json
+        with open(os.path.join(evdir, 'metrics.json'), 'w') as f:
+            json.dump(m, f, indent=4)
+
         plt.scatter(yt, yp, alpha=0.6); plt.savefig(os.path.join(evdir,'scatter.png')); plt.clf()
         plt.plot(self.y_history.index, self.y_history, label='History')
         plt.plot(X_test.index, yt, label='Actual')
@@ -64,16 +70,18 @@ class ModelTrainer:
         plt.savefig(os.path.join(evdir,'residuals.png')); plt.clf()
         return m
     
-    def get_feature_importance(self, save=True):
+    def get_feature_importance(self, X_train, save=True):
         if self.model is None:
             logging.info(f"Loading pre-trained model from models/{self.model_name}.pkl")
             self.model = joblib.load(os.path.join(root, 'models', f'{self.model_name}.pkl'))
-        feature_names = self.model.booster_.feature_name()
+
+        feature_names = X_train.columns.tolist()
         importances   = self.model.feature_importances_
-        df_importance = pd.DataFrame(importances, index=feature_names, columns=["importance"])\
-            .sort_values("importance", ascending=False)\
-            .reset_index()\
-            .rename(columns={"index": "feature"})
+        df_importance = (
+            pd.DataFrame({"feature": feature_names, "importance": importances})
+            .sort_values("importance", ascending=False)
+            .reset_index(drop=True)
+        )
         if save:
             df_importance.to_csv(os.path.join(root, 'models', f'{self.model_name}_feature_importance.csv'), index=False)
         return df_importance
