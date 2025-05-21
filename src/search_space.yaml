@@ -85,6 +85,17 @@ catboost:
     low: 0.5
     high: 1.0
     log: false
+linear_regression:
+  fit_intercept:
+    type: int
+    low: 0
+    high: 1
+    log: false
+  positive:
+    type: int
+    low: 0
+    high: 1
+    log: false
 results:
   lightgbm:
     features:
@@ -309,3 +320,38 @@ results:
       bagging_temperature: 0.9483789574340495
       border_count: 157
       rsm: 0.9180833621861976
+  linear_regression:
+    features:
+    - New_Sales_std_this_year_pct_change_12_backshift_12
+    - Budget_USD_mean_this_year_pct_change_12
+    - New_Sales_std_this_year_lag_12_backshift_12
+    - Budget_USD_std_this_year_diff_12
+    - Budget_USD_mean_this_year_lag_12
+    - Budget_USD_std_this_quarter_lag_6
+    - New_Sales_mean_this_year_backshift_12
+    - New_Sales_std_this_year_backshift_12
+    - Budget_USD_mean_this_year_diff_12
+    - New_Sales_std_this_year_diff_12_backshift_12
+    - Budget_USD_mean_this_quarter_lag_6
+    - New_Sales_mean_this_quarter_backshift_12
+    - Budget_USD_std_this_year_pct_change_12
+    - New_Sales_mean_this_year_diff_12_backshift_12
+    - Budget_USD_mean_this_quarter_lag_3
+    - Budget_USD_mean_this_quarter
+    - Budget_USD_mean_this_quarter_lag_12
+    - New_Sales_mean_this_year_pct_change_12_backshift_12
+    - New_Sales_mean_this_quarter_pct_change_12_backshift_12
+    - Budget_USD_std_this_quarter_pct_change_3
+    - Budget_USD_mean_this_quarter_pct_change_3
+    - New_Sales_mean_this_quarter_pct_change_3_backshift_12
+    - Year
+    - New_Sales_mean_this_quarter_diff_6_backshift_12
+    - Budget_USD_std_this_quarter
+    - Budget_USD_std_this_quarter_pct_change_6
+    - New_Sales_mean_this_quarter_pct_change_6_backshift_12
+    - New_Sales_mean_this_year_lag_12_backshift_12
+    - Budget_USD_std_this_year_lag_12
+    - Budget_USD_mean_this_quarter_pct_change_12
+    params:
+      fit_intercept: 1
+      positive: 1

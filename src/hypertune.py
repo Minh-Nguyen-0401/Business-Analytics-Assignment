@@ -5,6 +5,7 @@ from catboost import CatBoostRegressor
 import optuna
 from optuna.integration import OptunaSearchCV
 from optuna.distributions import IntDistribution, FloatDistribution
+from sklearn.linear_model import LinearRegression
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 root = os.path.dirname(CURRENT_DIR)
@@ -23,9 +24,14 @@ class HyperTuner:
 
     def run_permutation_importance(self, X, y):
         self.X, self.y = X, y
-        model = (lgb.LGBMRegressor(random_state=42, verbose=-1)
-                 if self.name=='lightgbm'
-                 else CatBoostRegressor(verbose=0, random_state=42))
+        if self.name == 'lightgbm':
+            model = lgb.LGBMRegressor(random_state=42, verbose=-1)
+        elif self.name == 'catboost':
+            model = CatBoostRegressor(verbose=0, random_state=42)
+        elif self.name == 'linear_regression':
+            model = LinearRegression()
+        else:
+            raise ValueError(f"Model not yet integrated: {self.name}")
         imp = np.zeros(X.shape[1])
         for tr, te in TimeSeriesSplit(n_splits=self.splits).split(X):
             model.fit(X.iloc[tr], y.iloc[tr])
@@ -59,15 +65,20 @@ class HyperTuner:
         space = yaml.safe_load(open(self.space_path))[self.name]
         dist = self._build_distributions(space)
         Xsub = self.X[feats]
-        model = (lgb.LGBMRegressor(random_state=42)
-                 if self.name=='lightgbm'
-                 else CatBoostRegressor(verbose=0, random_state=42))
+        if self.name == 'lightgbm':
+            model = lgb.LGBMRegressor(random_state=42)
+        elif self.name == 'catboost':
+            model = CatBoostRegressor(verbose=0, random_state=42)
+        elif self.name == 'linear_regression':
+            model = LinearRegression()
+        else:
+            raise ValueError(f"Unknown model: {self.name}")
         opt = OptunaSearchCV(
             model,
             param_distributions=dist,
             cv=TimeSeriesSplit(n_splits=self.splits),
             scoring='neg_root_mean_squared_error',
-            n_trials=n_trials,
+            n_trials=max(1,n_trials),
             random_state=0
         )
         opt.fit(Xsub, self.y)
@@ -75,4 +86,4 @@ class HyperTuner:
         data.setdefault('results', {})
         data['results'].setdefault(self.name, {})['params'] = best
         yaml.safe_dump(data, open(self.out_path,'w'), sort_keys=False)
-        return best
+        # return best

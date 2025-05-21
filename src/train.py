@@ -7,6 +7,9 @@ import lightgbm as lgb
 from catboost import CatBoostRegressor
 import logging
 import json
+from sklearn.linear_model import LinearRegression
+import warnings
+warnings.filterwarnings("ignore")
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 root = os.path.dirname(CURRENT_DIR)
@@ -34,8 +37,14 @@ class ModelTrainer:
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> None:
         logging.info(f"Training {self.model_name} with {self.params}")
-        mdl = (lgb.LGBMRegressor(**self.params) if self.model_name=='lightgbm'
-               else CatBoostRegressor(**self.params))
+        if self.model_name == "lightgbm":
+            mdl = lgb.LGBMRegressor(**self.params)
+        elif self.model_name == "catboost":
+            mdl = CatBoostRegressor(**self.params)
+        elif self.model_name == "linear_regression":
+            mdl = LinearRegression(**self.params)
+        else:
+            raise ValueError(f"Unknown model '{self.model_name}'")
         self.model = mdl.fit(X, y)
         self.y_history = y.copy()
         joblib.dump(self.model, os.path.join(root, 'models', f'{self.model_name}.pkl'))
@@ -76,7 +85,12 @@ class ModelTrainer:
             self.model = joblib.load(os.path.join(root, 'models', f'{self.model_name}.pkl'))
 
         feature_names = X_train.columns.tolist()
-        importances   = self.model.feature_importances_
+        if hasattr(self.model, "feature_importances_"):
+            importances = self.model.feature_importances_
+        elif hasattr(self.model, "coef_"):
+            importances = np.abs(self.model.coef_)
+        else:
+            raise ValueError(f"Feature importance not available for {self.model_name}")
         df_importance = (
             pd.DataFrame({"feature": feature_names, "importance": importances})
             .sort_values("importance", ascending=False)
