@@ -1,0 +1,44 @@
+2025-05-22 11:02:10,613 WARNING From C:\Users\ACER\anaconda3\Lib\site-packages\keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2025-05-22 11:02:11,042 INFO Finished generating time-based features
+2025-05-22 11:02:11,050 INFO Finished generating agg_facts this year/quarter
+2025-05-22 11:02:11,086 INFO Finished generating mass_gen features
+2025-05-22 11:02:11,086 INFO Finished generating RSI features
+2025-05-22 11:02:11,089 INFO Finished generating Promo Indicators
+2025-05-22 11:02:11,102 INFO Finished shifting back predictive features 12 months
+2025-05-22 11:02:11,112 INFO Finished generating time-based features
+2025-05-22 11:02:11,146 INFO Finished generating agg_facts this year/quarter
+2025-05-22 11:02:11,926 INFO Finished generating mass_gen features
+2025-05-22 11:02:11,983 INFO Finished generating RSI features
+2025-05-22 11:02:11,988 INFO Finished generating Promo Indicators
+2025-05-22 11:02:13,325 INFO Finished shifting back predictive features 12 months
+2025-05-22 11:02:13,392 INFO Drop columns with more than 33 non-null values: Index([], dtype='object')
+2025-05-22 11:02:13,398 INFO Drop columns with only one unique value: []
+2025-05-22 11:02:13,946 INFO Dropped 0 features with MI >= 0.0
+2025-05-22 11:02:15,665 INFO Dropped 31 features with VIF <= 1 or >= inf
+2025-05-22 11:02:15,667 INFO Overall dropped 29 features, including Index(['Budget_USD', 'Budget_USD_diff_12', 'Budget_USD_diff_3',
+       'Budget_USD_diff_6', 'Budget_USD_lag_12', 'Budget_USD_lag_3',
+       'Budget_USD_lag_6', 'Budget_USD_mean_this_year_diff_3',
+       'Budget_USD_mean_this_year_pct_change_3',
+       'Budget_USD_mean_this_year_rolling_std_3', 'Budget_USD_pct_change_12',
+       'Budget_USD_pct_change_3', 'Budget_USD_pct_change_6',
+       'Budget_USD_std_this_year_diff_3',
+       'Budget_USD_std_this_year_rolling_std_3',
+       'New_Sales_mean_this_year_diff_3_backshift_12',
+       'New_Sales_mean_this_year_pct_change_3_backshift_12',
+       'New_Sales_mean_this_year_rolling_std_3_backshift_12',
+       'New_Sales_std_this_year_diff_3_backshift_12',
+       'New_Sales_std_this_year_pct_change_3_backshift_12',
+       'New_Sales_std_this_year_rolling_std_3_backshift_12', 'Promo_Type',
+       'budget_to_sales', 'budget_to_sales_diff_12', 'budget_to_sales_diff_3',
+       'budget_to_sales_diff_6', 'budget_to_sales_lag_12',
+       'budget_to_sales_lag_3', 'budget_to_sales_lag_6',
+       'budget_to_sales_pct_change_12', 'budget_to_sales_pct_change_3',
+       'budget_to_sales_pct_change_6'],
+      dtype='object')
+2025-05-22 11:02:24,952 WARNING From C:\Users\ACER\anaconda3\Lib\site-packages\keras\src\backend.py:1398: The name tf.executing_eagerly_outside_functions is deprecated. Please use tf.compat.v1.executing_eagerly_outside_functions instead.
+
+2025-05-22 11:02:25,270 WARNING From C:\Users\ACER\anaconda3\Lib\site-packages\keras\src\utils\tf_utils.py:492: The name tf.ragged.RaggedTensorValue is deprecated. Please use tf.compat.v1.ragged.RaggedTensorValue instead.
+
+2025-05-22 11:02:34,136 INFO Assets written to: C:\Users\ACER\AppData\Local\Temp\tmpwbr9uefq\assets
+2025-05-22 11:02:58,262 INFO Assets written to: C:\Users\ACER\AppData\Local\Temp\tmp_6tfw6o3\assets

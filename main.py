@@ -34,29 +34,53 @@ def main():
     X_org_test = pre_processor_org.transform(X_org_test)
 
     pre_processor_ext = CustomPreprocessor()
-    pre_processor_ext.fit(X_ext_train, y_train, mi_pct = 0.6)
+    pre_processor_ext.fit(X_ext_train, y_train, mi_pct = 0.7)
     X_ext_train = pre_processor_ext.transform(X_ext_train)
     X_ext_test = pre_processor_ext.transform(X_ext_test)
 
     X_train = pd.concat([X_org_train, X_ext_train], axis=1)
     X_test = pd.concat([X_org_test, X_ext_test], axis=1)
 
-    # Hypertunining
-    hypertuner = HyperTuner('lightgbm', 100, 5)
+    X_train.to_csv("./temp_test_data/X_train.csv", index=False)
+    X_test.to_csv("./temp_test_data/X_test.csv", index=False)
+    y_train.to_csv("./temp_test_data/y_train.csv", index=False)
+    y_test.to_csv("./temp_test_data/y_test.csv", index=False)
+
+    # LR & Boosted Models
+    feats_to_keep = {
+        "linear_regression" : 30,
+        "lightgbm" : 100,
+        "catboost" : 100
+    }
+    for model in ["", "lightgbm", "catboost"]:
+        hypertuner = HyperTuner(model, feats_to_keep[model], 5)
+        feats = hypertuner.run_permutation_importance(X_train, y_train)
+        # keep all promo_type features
+        promo_type_feat = [col for col in X_train.columns if bool(re.match(r"(?i)(promo_type|days_since_last_promo).*",col))]
+        feats.extend(promo_type_feat)
+        print(f"Extended obligatory features: {', '.join(promo_type_feat)}")
+        feats = list(set(feats))
+        hypertuner.tune(n_trials=100)
+    
+        trainer = ModelTrainer(model)
+        trainer.fit(X_train[feats], y_train)
+        preds = trainer.predict(X_test[feats])
+        trainer.evaluate(y_test, preds)
+        trainer.get_feature_importance(X_train=X_train[feats], save=True)
+
+    # ANN Models
+    hypertuner = HyperTuner("lstm", 80, 5)
     feats = hypertuner.run_permutation_importance(X_train, y_train)
-    # keep all promo_type features
-    # promo_type_feat = [col for col in X_train.columns if bool(re.match(r"(?i)(promo_type|days_since_last_promo).*",col))]
-    # feats.extend(promo_type_feat)
-    # print(f"Extended obligatory features: {', '.join(promo_type_feat)}")
-    # feats = list(set(feats))
-    params = hypertuner.tune(n_trials=100)
+    promo_type_feat = [col for col in X_train.columns if bool(re.match(r"(?i)(promo_type|days_since_last_promo).*",col))]
+    feats.extend(promo_type_feat)
+    print(f"Extended obligatory features: {', '.join(promo_type_feat)}")
+    feats = list(set(feats))
 
-    # Model Training
-    trainer = ModelTrainer('lightgbm')
-    trainer.fit(X_train[feats], y_train)
-    preds = trainer.predict(X_test[feats])
-    trainer.evaluate(y_test, preds, X_test=X_test[feats])
-    trainer.get_feature_importance(save=True)
-
+    for model in ["rnn", "lstm"]:
+        trainer = ModelTrainer(model)
+        trainer.fit(X_train[feats], y_train)
+        preds = trainer.predict(X_test[feats])
+        trainer.evaluate(y_test, preds)
+        # trainer.get_feature_importance(X_train=X_train[feats], save=True)
 if __name__ == "__main__":
     main()

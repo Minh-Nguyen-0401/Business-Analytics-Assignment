@@ -6,6 +6,10 @@ import optuna
 from optuna.integration import OptunaSearchCV
 from optuna.distributions import IntDistribution, FloatDistribution
 from sklearn.linear_model import LinearRegression
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, RNN, SimpleRNN, SimpleRNNCell, Dropout
+from tensorflow.keras.optimizers import Adam
+from scikeras.wrappers import KerasRegressor
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 root = os.path.dirname(CURRENT_DIR)
@@ -24,27 +28,41 @@ class HyperTuner:
 
     def run_permutation_importance(self, X, y):
         self.X, self.y = X, y
+        model_for_pi = None
+        original_model_name = self.name
+
         if self.name == 'lightgbm':
-            model = lgb.LGBMRegressor(random_state=42, verbose=-1)
+            model_for_pi = lgb.LGBMRegressor(random_state=42, verbose=-1)
         elif self.name == 'catboost':
-            model = CatBoostRegressor(verbose=0, random_state=42)
+            model_for_pi = CatBoostRegressor(verbose=0, random_state=42)
         elif self.name == 'linear_regression':
-            model = LinearRegression()
+            model_for_pi = LinearRegression()
+        elif self.name in ['lstm', 'rnn']:
+            print(f"Calculating permutation importance for {self.name} using LightGBM as a base model.")
+            model_for_pi = lgb.LGBMRegressor(random_state=42, verbose=-1)
+            # We will save features under the original model name (lstm or rnn)
         else:
-            raise ValueError(f"Model not yet integrated: {self.name}")
+            raise ValueError(f"Model not yet integrated for permutation importance: {self.name}")
+
+        if model_for_pi is None: # Should not happen if logic is correct
+             raise ValueError("Model for permutation importance was not set.")
+
         imp = np.zeros(X.shape[1])
         for tr, te in TimeSeriesSplit(n_splits=self.splits).split(X):
-            model.fit(X.iloc[tr], y.iloc[tr])
+            model_for_pi.fit(X.iloc[tr], y.iloc[tr])
             imp += permutation_importance(
-                model, X.iloc[te], y.iloc[te],
+                model_for_pi, X.iloc[te], y.iloc[te],
                 n_repeats=5, random_state=0
             ).importances_mean
         imp /= self.splits
         feats = X.columns[np.argsort(imp)[::-1][:self.nf]].tolist()
+        
         data = yaml.safe_load(open(self.out_path)) or {}
         data.setdefault('results', {})
-        data['results'].setdefault(self.name, {})['features'] = feats
+        # Store features under the original model name (e.g., 'lstm' or 'rnn')
+        data['results'].setdefault(original_model_name, {})['features'] = feats
         yaml.safe_dump(data, open(self.out_path,'w'), sort_keys=False)
+        print(f"Selected features for {original_model_name} (using {model_for_pi.__class__.__name__} for PI): {feats}")
         return feats
 
     def _build_distributions(self, space):
