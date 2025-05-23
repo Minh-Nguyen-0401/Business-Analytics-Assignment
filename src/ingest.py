@@ -44,6 +44,9 @@ class Ingestion:
         # Load supp data
         supp_pathfiles_list = Path(self.supp_path).rglob('*.csv')
         supp_pathfiles_list = [str(path) for path in supp_pathfiles_list]
+        test_1 = supp_pathfiles_list.copy()
+        supp_pathfiles_list.remove([f for f in supp_pathfiles_list if bool(re.match(r".*casual_outerwear_inflation_rate.csv$",f))][0]) 
+        print(f"Removed {[f for f in test_1 if f not in supp_pathfiles_list]}")
         file_names = [os.path.basename(path).split('.')[0].lower() for path in supp_pathfiles_list]
         for name, path in zip(file_names, supp_pathfiles_list):
             data_dict[name] = pd.read_csv(path,index_col=0)

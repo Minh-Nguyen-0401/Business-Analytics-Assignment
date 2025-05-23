@@ -99,314 +99,384 @@ linear_regression:
 results:
   lightgbm:
     features:
-    - days_since_last_promo
+    - months_since_last_promo
+    - Budget_USD_ewm_3
     - New_Sales_mean_this_quarter_diff_6_backshift_12
     - Month
-    - Budget_USD_ewm_3
     - New_Sales_mean_this_quarter_ewm_3_backshift_12
+    - budget_to_sales_ewm_3
     - New_Sales_mean_this_quarter_lag_12_backshift_12
     - New_Sales_mean_this_year_rolling_std_6_backshift_12
-    - New_Sales_ewm_3_backshift_12
     - New_Sales_mean_this_quarter_backshift_12
+    - New_Sales_ewm_3_backshift_12
     - New_Sales_diff_6_backshift_12
-    - Budget_USD_ewm_6
+    - New_Sales_std_this_quarter_rolling_std_12_backshift_12
+    - Budget_USD_mean_this_quarter_ewm_6
     - Budget_USD_mean_this_year_ewm_12
+    - months_since_last_promo_lag_12
+    - Budget_USD_std_this_year_ewm_6
+    - Budget_USD_rolling_std_12
+    - New_Sales_std_this_quarter_ewm_3_backshift_12
+    - New_Sales_pct_change_6_backshift_12
+    - Budget_USD_mean_this_quarter_ewm_12
+    - New_Sales_lag_6_backshift_12
+    - Budget_USD_ewm_6
     - Budget_USD_std_this_year_rolling_std_6
     - Budget_USD_mean_this_year_rolling_std_6
-    - Budget_USD_mean_this_quarter_ewm_3
-    - days_since_last_promo_lag_12
-    - Budget_USD_rolling_std_12
-    - budget_to_sales_ewm_3
-    - New_Sales_std_this_quarter_rolling_std_12_backshift_12
-    - New_Sales_lag_6_backshift_12
-    - Budget_USD_std_this_year_ewm_6
-    - Budget_USD_ewm_12
-    - budget_to_sales_ewm_6
-    - New_Sales_std_this_quarter_ewm_3_backshift_12
-    - New_Sales_mean_this_quarter_rolling_std_3_backshift_12
-    - Budget_USD_mean_this_year_ewm_3
     - New_Sales_backshift_12
-    - New_Sales_mean_this_quarter_rolling_std_6_backshift_12
-    - New_Sales_pct_change_6_backshift_12
-    - New_Sales_mean_this_year_diff_6_backshift_12
-    - New_Sales_rolling_std_6_backshift_12
-    - Budget_USD_mean_this_year_rolling_std_12
-    - New_Sales_diff_3_backshift_12
     - New_Sales_mean_this_year_rolling_std_12_backshift_12
-    - New_Sales_std_this_year_rolling_std_6_backshift_12
-    - New_Sales_mean_this_quarter_rolling_std_12_backshift_12
-    - New_Sales_ewm_6_backshift_12
-    - New_Sales_diff_12_backshift_12
-    - New_Sales_rolling_std_3_backshift_12
-    - budget_to_sales_rolling_std_3
-    - New_Sales_mean_this_quarter_lag_6_backshift_12
+    - Budget_USD_ewm_12
+    - Budget_USD_std_this_quarter_diff_12
+    - New_Sales_mean_this_quarter_rolling_std_6_backshift_12
     - New_Sales_mean_this_quarter_pct_change_6_backshift_12
-    - budget_to_sales_rolling_std_6
+    - New_Sales_mean_this_quarter_rolling_std_3_backshift_12
+    - New_Sales_diff_3_backshift_12
+    - Budget_USD_mean_this_quarter_ewm_3
+    - Budget_USD_mean_this_year_ewm_3
     - Budget_USD_std_this_quarter_ewm_6
-    - Budget_USD_mean_this_quarter
-    - New_Sales_pct_change_12_backshift_12
-    - New_Sales_std_this_year_ewm_6_backshift_12
-    - Budget_USD_std_this_quarter_lag_6
-    - New_Sales_std_this_year_ewm_12_backshift_12
-    - budget_to_sales_ewm_12
-    - Budget_USD_mean_this_quarter_rolling_std_12
-    - Budget_USD_std_this_quarter_rolling_std_3
-    - New_Sales_mean_this_quarter_diff_12_backshift_12
-    - New_Sales_std_this_quarter_lag_3_backshift_12
-    - Budget_USD_std_this_year_ewm_12
-    - New_Sales_std_this_quarter_pct_change_6_backshift_12
-    - Budget_USD_std_this_quarter_rolling_std_12
-    - Budget_USD_mean_this_quarter_pct_change_12
-    - Budget_USD_mean_this_quarter_ewm_12
-    - New_Sales_std_this_quarter_lag_6_backshift_12
-    - New_Sales_std_this_quarter_ewm_12_backshift_12
-    - New_Sales_std_this_quarter_rolling_std_6_backshift_12
-    - New_Sales_std_this_year_lag_3_backshift_12
-    - Budget_USD_mean_this_year
-    - New_Sales_std_this_quarter_backshift_12
+    - New_Sales_std_this_year_rolling_std_6_backshift_12
     - Budget_USD_std_this_year_rolling_std_12
-    - Budget_USD_mean_this_year_pct_change_6
-    - New_Sales_std_this_year_lag_12_backshift_12
-    - Budget_USD_mean_this_quarter_diff_12
-    - New_Sales_mean_this_quarter_pct_change_12_backshift_12
-    - Budget_USD_mean_this_quarter_pct_change_6
-    - New_Sales_mean_this_quarter_lag_3_backshift_12
+    - New_Sales_mean_this_quarter_rolling_std_12_backshift_12
+    - New_Sales_std_this_quarter_ewm_6_backshift_12
+    - Budget_USD_rolling_std_6
+    - Budget_USD_std_this_quarter_rolling_std_3
+    - months_since_last_promo_lag_6
+    - New_Sales_mean_this_year_diff_6_backshift_12
     - New_Sales_std_this_quarter_pct_change_12_backshift_12
+    - Budget_USD_rolling_std_3
+    - New_Sales_lag_12_backshift_12
+    - New_Sales_rolling_std_6_backshift_12
+    - New_Sales_ewm_6_backshift_12
+    - New_Sales_pct_change_12_backshift_12
+    - budget_to_sales_rolling_std_3
+    - Budget_USD_mean_this_year_rolling_std_12
+    - Budget_USD_mean_this_year_ewm_6
+    - New_Sales_mean_this_quarter_pct_change_3_backshift_12
+    - New_Sales_std_this_quarter_lag_12_backshift_12
+    - Budget_USD_mean_this_quarter_rolling_std_12
+    - Budget_USD_mean_this_quarter_diff_6
+    - New_Sales_std_this_year_lag_3_backshift_12
+    - New_Sales_std_this_quarter_diff_12_backshift_12
+    - Budget_USD_std_this_year_ewm_12
+    - Budget_USD_mean_this_quarter
+    - New_Sales_std_this_year_ewm_12_backshift_12
+    - New_Sales_std_this_year_ewm_6_backshift_12
+    - New_Sales_std_this_quarter_rolling_std_6_backshift_12
+    - New_Sales_std_this_year_ewm_3_backshift_12
+    - New_Sales_mean_this_quarter_lag_6_backshift_12
+    - New_Sales_std_this_quarter_pct_change_6_backshift_12
     - New_Sales_std_this_quarter_pct_change_3_backshift_12
-    - Budget_USD_std_this_year_pct_change_3
-    - Quarter
-    - Budget_USD_std_this_year
-    - Budget_USD_std_this_quarter_pct_change_6
-    - Budget_USD_mean_this_quarter_lag_3
-    - Budget_USD_mean_this_year_lag_3
-    - Budget_USD_mean_this_quarter_lag_6
-    - Budget_USD_std_this_quarter_lag_3
-    - Budget_USD_std_this_quarter_pct_change_3
-    - Budget_USD_std_this_year_lag_3
-    - Budget_USD_mean_this_year_diff_6
-    - Budget_USD_std_this_year_lag_6
-    - Budget_USD_std_this_quarter_diff_3
-    - Budget_USD_mean_this_year_lag_12
     - Budget_USD_std_this_year_lag_12
-    - Budget_USD_std_this_year_pct_change_6
+    - New_Sales_std_this_year_diff_6_backshift_12
+    - Budget_USD_std_this_quarter_pct_change_3
+    - Budget_USD_std_this_year_pct_change_3
+    - Budget_USD_mean_this_quarter_pct_change_6
+    - Budget_USD_std_this_quarter_pct_change_6
     - Promo_Type_No_Promo
+    - Budget_USD_mean_this_year_diff_12
+    - Budget_USD_std_this_quarter_diff_6
+    - Budget_USD_mean_this_year_diff_6
+    - Budget_USD_std_this_quarter_diff_3
+    - Budget_USD_mean_this_quarter_pct_change_12
+    - Budget_USD_mean_this_year_lag_12
+    - Budget_USD_std_this_quarter_lag_6
+    - Budget_USD_mean_this_quarter_lag_6
+    - Budget_USD_std_this_year_lag_3
+    - Budget_USD_std_this_quarter_lag_3
+    - Budget_USD_mean_this_year_lag_3
+    - Budget_USD_mean_this_quarter_lag_3
+    - Budget_USD_std_this_year
+    - Quarter
+    - Budget_USD_std_this_year_pct_change_6
     - Year
+    - Budget_USD_mean_this_year_pct_change_12
+    - New_Sales_std_this_year_pct_change_6_backshift_12
     - New_Sales_mean_this_year_lag_3_backshift_12
-    - Budget_USD_std_this_quarter_pct_change_12
-    - New_Sales_rolling_std_12_backshift_12
-    - New_Sales_mean_this_year_diff_12_backshift_12
-    - New_Sales_std_this_year_backshift_12
-    - New_Sales_mean_this_quarter_ewm_12_backshift_12
     - New_Sales_mean_this_year_lag_12_backshift_12
+    - New_Sales_mean_this_year_ewm_6_backshift_12
     - New_Sales_mean_this_year_ewm_12_backshift_12
+    - New_Sales_std_this_year_lag_6_backshift_12
+    - New_Sales_mean_this_year_backshift_12
+    - New_Sales_mean_this_year_pct_change_6_backshift_12
+    - New_Sales_mean_this_year_pct_change_12_backshift_12
     params:
-      num_leaves: 38
-      max_depth: 4
-      learning_rate: 0.07987690738513692
-      n_estimators: 760
-      subsample: 0.8311769612852165
-      colsample_bytree: 0.8108861849181737
-      reg_alpha: 0.48565643432723143
-      reg_lambda: 0.9176736393648338
-      min_child_samples: 13
+      num_leaves: 32
+      max_depth: 3
+      learning_rate: 0.2627051290402922
+      n_estimators: 565
+      subsample: 0.6291102646788673
+      colsample_bytree: 0.7281155468647288
+      reg_alpha: 0.3724249140735814
+      reg_lambda: 0.5007312495041407
+      min_child_samples: 5
   catboost:
     features:
-    - days_since_last_promo
+    - months_since_last_promo
     - Budget_USD_ewm_3
     - Month
-    - New_Sales_diff_6_backshift_12
     - budget_to_sales_ewm_3
+    - New_Sales_diff_6_backshift_12
     - Quarter
     - New_Sales_mean_this_quarter_diff_6_backshift_12
     - New_Sales_mean_this_year_rolling_std_6_backshift_12
-    - New_Sales_mean_this_quarter_pct_change_6_backshift_12
-    - Budget_USD_std_this_year_rolling_std_6
-    - budget_to_sales_ewm_12
-    - Budget_USD_ewm_6
-    - New_Sales_pct_change_6_backshift_12
     - budget_to_sales_ewm_6
+    - New_Sales_pct_change_6_backshift_12
+    - Budget_USD_ewm_6
     - Budget_USD_mean_this_year_rolling_std_6
+    - budget_to_sales_ewm_12
     - New_Sales_std_this_year_rolling_std_6_backshift_12
+    - New_Sales_mean_this_quarter_pct_change_6_backshift_12
     - New_Sales_mean_this_quarter_ewm_3_backshift_12
-    - days_since_last_promo_lag_12
+    - Budget_USD_std_this_year_rolling_std_6
+    - Budget_USD_ewm_12
+    - New_Sales_mean_this_quarter_lag_12_backshift_12
+    - months_since_last_promo_lag_12
     - budget_to_sales_rolling_std_3
     - Budget_USD_mean_this_quarter_ewm_3
-    - Budget_USD_ewm_12
-    - New_Sales_ewm_3_backshift_12
-    - New_Sales_mean_this_quarter_lag_12_backshift_12
-    - Budget_USD_mean_this_quarter
     - Budget_USD_std_this_quarter
-    - Budget_USD_std_this_quarter_ewm_3
-    - Budget_USD_mean_this_year
-    - New_Sales_std_this_year_diff_6_backshift_12
+    - New_Sales_mean_this_year_diff_6_backshift_12
     - Budget_USD_rolling_std_12
-    - Budget_USD_std_this_quarter_lag_12
-    - New_Sales_diff_3_backshift_12
-    - Budget_USD_std_this_year_rolling_std_12
-    - New_Sales_pct_change_3_backshift_12
-    - Budget_USD_mean_this_quarter_pct_change_6
-    - Budget_USD_mean_this_quarter_ewm_6
-    - New_Sales_mean_this_quarter_backshift_12
-    - Budget_USD_std_this_quarter_pct_change_12
-    - New_Sales_mean_this_quarter_ewm_6_backshift_12
-    - New_Sales_lag_12_backshift_12
-    - Budget_USD_rolling_std_6
-    - Budget_USD_mean_this_year_rolling_std_12
-    - New_Sales_std_this_quarter_ewm_3_backshift_12
-    - Budget_USD_std_this_year
-    - New_Sales_backshift_12
-    - Budget_USD_mean_this_year_ewm_6
-    - Budget_USD_mean_this_quarter_ewm_12
-    - Budget_USD_mean_this_quarter_rolling_std_12
-    - Budget_USD_std_this_quarter_ewm_12
-    - New_Sales_mean_this_year_pct_change_6_backshift_12
-    - Budget_USD_std_this_year_lag_12
-    - Budget_USD_rolling_std_3
-    - New_Sales_std_this_quarter_rolling_std_12_backshift_12
     - Budget_USD_mean_this_year_ewm_12
+    - New_Sales_ewm_3_backshift_12
+    - New_Sales_std_this_year_diff_6_backshift_12
+    - New_Sales_diff_3_backshift_12
+    - Budget_USD_std_this_quarter_pct_change_12
+    - Budget_USD_mean_this_quarter_ewm_6
+    - Budget_USD_mean_this_quarter
+    - New_Sales_lag_12_backshift_12
+    - New_Sales_mean_this_quarter_backshift_12
+    - New_Sales_std_this_quarter_rolling_std_12_backshift_12
+    - Budget_USD_mean_this_year
+    - Budget_USD_mean_this_quarter_pct_change_6
+    - Budget_USD_std_this_quarter_lag_12
+    - New_Sales_pct_change_3_backshift_12
+    - Budget_USD_rolling_std_3
+    - New_Sales_rolling_std_12_backshift_12
+    - Budget_USD_std_this_year_rolling_std_12
+    - New_Sales_backshift_12
+    - Budget_USD_mean_this_quarter_ewm_12
+    - New_Sales_rolling_std_3_backshift_12
+    - New_Sales_std_this_quarter_ewm_3_backshift_12
+    - Budget_USD_mean_this_quarter_diff_6
+    - New_Sales_lag_6_backshift_12
+    - New_Sales_std_this_year_lag_3_backshift_12
+    - New_Sales_std_this_quarter_ewm_12_backshift_12
+    - Budget_USD_std_this_quarter_ewm_3
+    - Budget_USD_std_this_year_ewm_6
+    - Budget_USD_mean_this_year_ewm_6
+    - New_Sales_std_this_year_lag_6_backshift_12
+    - Budget_USD_mean_this_year_pct_change_6
+    - New_Sales_mean_this_quarter_ewm_6_backshift_12
+    - Budget_USD_mean_this_year_rolling_std_12
+    - Budget_USD_mean_this_quarter_diff_12
+    - New_Sales_std_this_year_pct_change_6_backshift_12
+    - Budget_USD_std_this_year
+    - New_Sales_mean_this_quarter_diff_3_backshift_12
+    - Budget_USD_mean_this_quarter_pct_change_12
     - Budget_USD_std_this_year_ewm_3
     - Budget_USD_mean_this_quarter_lag_12
-    - New_Sales_mean_this_quarter_lag_6_backshift_12
-    - Budget_USD_mean_this_quarter_pct_change_3
-    - Budget_USD_std_this_quarter_ewm_6
-    - Budget_USD_std_this_quarter_diff_6
-    - New_Sales_rolling_std_3_backshift_12
-    - Budget_USD_std_this_year_pct_change_12
-    - New_Sales_rolling_std_12_backshift_12
-    - New_Sales_std_this_quarter_lag_3_backshift_12
-    - New_Sales_std_this_quarter_backshift_12
-    - New_Sales_std_this_year_lag_6_backshift_12
-    - New_Sales_diff_12_backshift_12
-    - New_Sales_std_this_quarter_ewm_12_backshift_12
-    - Budget_USD_mean_this_year_pct_change_6
     - Budget_USD_mean_this_quarter_lag_6
-    - Budget_USD_mean_this_quarter_diff_12
-    - Budget_USD_mean_this_year_ewm_3
-    - New_Sales_std_this_year_lag_3_backshift_12
-    - New_Sales_mean_this_quarter_rolling_std_6_backshift_12
-    - Budget_USD_mean_this_quarter_pct_change_12
-    - Budget_USD_mean_this_year_diff_12
     - Budget_USD_std_this_quarter_diff_12
-    - Budget_USD_mean_this_quarter_diff_6
-    - Budget_USD_std_this_quarter_pct_change_6
-    - New_Sales_mean_this_quarter_rolling_std_12_backshift_12
-    - Budget_USD_mean_this_year_lag_3
-    - Budget_USD_std_this_quarter_pct_change_3
-    - New_Sales_rolling_std_6_backshift_12
-    - New_Sales_std_this_quarter_pct_change_6_backshift_12
-    - New_Sales_std_this_year_ewm_6_backshift_12
-    - New_Sales_std_this_quarter_rolling_std_3_backshift_12
-    - New_Sales_mean_this_quarter_pct_change_3_backshift_12
-    - Budget_USD_std_this_year_ewm_12
-    - New_Sales_std_this_year_ewm_12_backshift_12
-    - days_since_last_promo_lag_3
-    - New_Sales_mean_this_quarter_rolling_std_3_backshift_12
-    - New_Sales_lag_6_backshift_12
-    - Budget_USD_std_this_quarter_diff_3
-    - budget_to_sales_rolling_std_6
-    - New_Sales_mean_this_quarter_lag_3_backshift_12
+    - Budget_USD_std_this_quarter_ewm_6
+    - New_Sales_std_this_quarter_ewm_6_backshift_12
+    - Budget_USD_std_this_quarter_diff_6
+    - Budget_USD_mean_this_year_diff_12
+    - Budget_USD_std_this_year_pct_change_12
     - New_Sales_std_this_quarter_diff_6_backshift_12
-    - New_Sales_std_this_year_ewm_3_backshift_12
-    - Budget_USD_mean_this_quarter_lag_3
-    - Budget_USD_std_this_year_pct_change_3
+    - Budget_USD_mean_this_year_lag_3
+    - New_Sales_mean_this_quarter_lag_6_backshift_12
+    - New_Sales_mean_this_quarter_pct_change_3_backshift_12
     - New_Sales_std_this_year_pct_change_12_backshift_12
+    - New_Sales_std_this_quarter_lag_12_backshift_12
+    - Budget_USD_mean_this_year_diff_6
+    - Budget_USD_rolling_std_6
+    - Budget_USD_std_this_year_pct_change_3
+    - New_Sales_ewm_6_backshift_12
+    - New_Sales_std_this_quarter_rolling_std_6_backshift_12
+    - New_Sales_std_this_quarter_rolling_std_3_backshift_12
+    - New_Sales_std_this_year_rolling_std_12_backshift_12
     - Budget_USD_std_this_year_diff_12
+    - New_Sales_mean_this_quarter_rolling_std_12_backshift_12
+    - Budget_USD_std_this_year_lag_12
+    - Budget_USD_mean_this_year_ewm_3
+    - New_Sales_std_this_quarter_backshift_12
+    - Budget_USD_mean_this_quarter_pct_change_3
+    - Budget_USD_std_this_quarter_diff_3
+    - New_Sales_std_this_quarter_pct_change_3_backshift_12
+    - months_since_last_promo_lag_3
+    - New_Sales_std_this_year_ewm_12_backshift_12
+    - New_Sales_std_this_quarter_lag_6_backshift_12
+    - Budget_USD_std_this_year_lag_3
+    - Budget_USD_mean_this_quarter_rolling_std_12
+    - New_Sales_std_this_year_ewm_3_backshift_12
+    - Budget_USD_std_this_quarter_lag_6
+    - Budget_USD_std_this_quarter_lag_3
     params:
       depth: 4
-      learning_rate: 0.17453335407191212
-      iterations: 228
-      l2_leaf_reg: 2.1085474009287153
-      random_strength: 0.3386206089072426
-      bagging_temperature: 0.9483789574340495
-      border_count: 157
-      rsm: 0.9180833621861976
+      learning_rate: 0.19422871992512158
+      iterations: 365
+      l2_leaf_reg: 2.161609220936114
+      random_strength: 0.13468431731166383
+      bagging_temperature: 0.6921167522219158
+      border_count: 243
+      rsm: 0.8634888594347653
   linear_regression:
     features:
     - New_Sales_std_this_year_pct_change_12_backshift_12
+    - Budget_USD_mean_this_quarter
+    - Budget_USD_std_this_quarter
+    - Budget_USD_std_this_quarter_pct_change_6
+    - Budget_USD_std_this_quarter_pct_change_3
     - Budget_USD_mean_this_year_pct_change_12
     - New_Sales_std_this_year_lag_12_backshift_12
     - Budget_USD_std_this_year_diff_12
-    - Budget_USD_mean_this_year_lag_12
     - Budget_USD_std_this_quarter_lag_6
+    - Budget_USD_mean_this_quarter_lag_6
+    - Budget_USD_mean_this_year_lag_12
+    - Budget_USD_mean_this_quarter_pct_change_3
+    - Budget_USD_mean_this_quarter_pct_change_6
     - New_Sales_mean_this_year_backshift_12
     - New_Sales_std_this_year_backshift_12
     - Budget_USD_mean_this_year_diff_12
     - New_Sales_std_this_year_diff_12_backshift_12
-    - Budget_USD_mean_this_quarter_lag_6
+    - Budget_USD_mean_this_quarter_lag_12
+    - Budget_USD_std_this_quarter_pct_change_12
+    - Budget_USD_mean_this_quarter_pct_change_12
+    - Budget_USD_mean_this_quarter_lag_3
     - New_Sales_mean_this_quarter_backshift_12
     - Budget_USD_std_this_year_pct_change_12
     - New_Sales_mean_this_year_diff_12_backshift_12
-    - Budget_USD_mean_this_quarter_lag_3
-    - Budget_USD_mean_this_quarter
-    - Budget_USD_mean_this_quarter_lag_12
+    - Budget_USD_std_this_quarter_lag_12
     - New_Sales_mean_this_year_pct_change_12_backshift_12
     - New_Sales_mean_this_quarter_pct_change_12_backshift_12
-    - Budget_USD_std_this_quarter_pct_change_3
-    - Budget_USD_mean_this_quarter_pct_change_3
+    - Budget_USD_std_this_quarter_lag_3
     - New_Sales_mean_this_quarter_pct_change_3_backshift_12
     - Year
-    - New_Sales_mean_this_quarter_diff_6_backshift_12
-    - Budget_USD_std_this_quarter
-    - Budget_USD_std_this_quarter_pct_change_6
-    - New_Sales_mean_this_quarter_pct_change_6_backshift_12
-    - New_Sales_mean_this_year_lag_12_backshift_12
-    - Budget_USD_std_this_year_lag_12
-    - Budget_USD_mean_this_quarter_pct_change_12
     params:
       fit_intercept: 1
       positive: 1
   lstm:
     features:
-    - days_since_last_promo
+    - months_since_last_promo
+    - Budget_USD_ewm_3
     - New_Sales_mean_this_quarter_diff_6_backshift_12
     - Month
-    - Budget_USD_ewm_3
     - New_Sales_mean_this_quarter_ewm_3_backshift_12
+    - budget_to_sales_ewm_3
     - New_Sales_mean_this_quarter_lag_12_backshift_12
     - New_Sales_mean_this_year_rolling_std_6_backshift_12
-    - New_Sales_ewm_3_backshift_12
     - New_Sales_mean_this_quarter_backshift_12
     - New_Sales_diff_6_backshift_12
-    - Budget_USD_ewm_6
-    - Budget_USD_mean_this_year_ewm_12
-    - Budget_USD_std_this_year_rolling_std_6
-    - Budget_USD_mean_this_year_rolling_std_6
-    - Budget_USD_mean_this_quarter_ewm_3
-    - days_since_last_promo_lag_12
-    - Budget_USD_rolling_std_12
-    - budget_to_sales_ewm_3
+    - New_Sales_ewm_3_backshift_12
     - New_Sales_std_this_quarter_rolling_std_12_backshift_12
-    - New_Sales_lag_6_backshift_12
+    - Budget_USD_mean_this_year_ewm_12
+    - Budget_USD_mean_this_quarter_ewm_6
+    - months_since_last_promo_lag_12
     - Budget_USD_std_this_year_ewm_6
-    - Budget_USD_ewm_12
-    - budget_to_sales_ewm_6
-    - New_Sales_std_this_quarter_ewm_3_backshift_12
-    - New_Sales_mean_this_quarter_rolling_std_3_backshift_12
-    - Budget_USD_mean_this_year_ewm_3
-    - New_Sales_backshift_12
-    - New_Sales_mean_this_quarter_rolling_std_6_backshift_12
     - New_Sales_pct_change_6_backshift_12
-    - New_Sales_mean_this_year_diff_6_backshift_12
-    - New_Sales_rolling_std_6_backshift_12
-    - Budget_USD_mean_this_year_rolling_std_12
-    - New_Sales_diff_3_backshift_12
+    - Budget_USD_rolling_std_12
+    - New_Sales_std_this_quarter_ewm_3_backshift_12
+    - New_Sales_lag_6_backshift_12
+    - Budget_USD_ewm_6
+    - Budget_USD_mean_this_quarter_ewm_12
+    - New_Sales_backshift_12
+    - New_Sales_mean_this_quarter_rolling_std_3_backshift_12
+    - Budget_USD_mean_this_year_rolling_std_6
+    - Budget_USD_std_this_year_rolling_std_6
+    - Budget_USD_ewm_12
+    - Budget_USD_mean_this_quarter_ewm_3
+    - Budget_USD_std_this_quarter_diff_12
     - New_Sales_mean_this_year_rolling_std_12_backshift_12
-    - New_Sales_std_this_year_rolling_std_6_backshift_12
-    - New_Sales_mean_this_quarter_rolling_std_12_backshift_12
-    - New_Sales_ewm_6_backshift_12
-    - New_Sales_diff_12_backshift_12
-    - New_Sales_rolling_std_3_backshift_12
-    - budget_to_sales_rolling_std_3
-    - New_Sales_mean_this_quarter_lag_6_backshift_12
+    - New_Sales_mean_this_quarter_rolling_std_6_backshift_12
     - New_Sales_mean_this_quarter_pct_change_6_backshift_12
-    - budget_to_sales_rolling_std_6
+    - Budget_USD_mean_this_year_ewm_3
     - Budget_USD_std_this_quarter_ewm_6
-    - Budget_USD_mean_this_quarter
-    - New_Sales_pct_change_12_backshift_12
-    - New_Sales_std_this_year_ewm_6_backshift_12
-    - Budget_USD_std_this_quarter_lag_6
+    - New_Sales_std_this_year_rolling_std_6_backshift_12
+    - New_Sales_diff_3_backshift_12
+    - New_Sales_lag_12_backshift_12
+    - New_Sales_mean_this_quarter_rolling_std_12_backshift_12
+    - Budget_USD_rolling_std_3
+    - New_Sales_std_this_quarter_ewm_6_backshift_12
+    - New_Sales_rolling_std_6_backshift_12
+    - months_since_last_promo_lag_6
+    - Budget_USD_rolling_std_6
+    - New_Sales_std_this_quarter_pct_change_12_backshift_12
+    - New_Sales_ewm_6_backshift_12
+    - New_Sales_mean_this_quarter_pct_change_3_backshift_12
+    - budget_to_sales_rolling_std_3
+    - Budget_USD_mean_this_quarter_rolling_std_12
+    - Budget_USD_std_this_year_rolling_std_12
+    - New_Sales_mean_this_quarter_diff_12_backshift_12
+    - Budget_USD_mean_this_year_ewm_6
+    - New_Sales_diff_12_backshift_12
     - New_Sales_std_this_year_ewm_12_backshift_12
-    - budget_to_sales_ewm_12
+    - Budget_USD_std_this_quarter_rolling_std_3
+    - New_Sales_mean_this_quarter_diff_3_backshift_12
+    - New_Sales_std_this_year_lag_3_backshift_12
+    - New_Sales_std_this_year_backshift_12
+    - Budget_USD_std_this_year_ewm_12
+    - New_Sales_std_this_quarter_lag_12_backshift_12
+    - Budget_USD_mean_this_quarter_lag_3
+    - New_Sales_std_this_year_ewm_6_backshift_12
+    - Budget_USD_std_this_quarter_diff_3
+    - Budget_USD_mean_this_year_lag_3
+    - New_Sales_std_this_year_lag_12_backshift_12
+    - Budget_USD_mean_this_quarter_diff_12
+    - New_Sales_mean_this_year_diff_6_backshift_12
+    - New_Sales_std_this_year_diff_6_backshift_12
+    - Budget_USD_mean_this_quarter_pct_change_12
+    - Quarter
+    - Budget_USD_std_this_year
+    - Budget_USD_mean_this_year_diff_6
+    - Budget_USD_std_this_quarter_pct_change_3
+    - Budget_USD_std_this_year_pct_change_3
+    - Budget_USD_std_this_year_lag_12
+    - Budget_USD_std_this_quarter_pct_change_6
+    - Budget_USD_std_this_year_pct_change_6
+    - Budget_USD_std_this_quarter_lag_6
+    - Budget_USD_std_this_year_lag_6
+    - Budget_USD_mean_this_year_lag_12
+    - Budget_USD_std_this_year_pct_change_12
+    - Budget_USD_std_this_quarter_pct_change_12
+    - Promo_Type_No_Promo
+    - Year
+    - Promo_Type_Discount
+    - New_Sales_mean_this_year_backshift_12
+    - New_Sales_mean_this_year_lag_3_backshift_12
+    - New_Sales_mean_this_year_ewm_6_backshift_12
+    - New_Sales_mean_this_year_lag_6_backshift_12
+    - New_Sales_std_this_year_lag_6_backshift_12
+    - New_Sales_mean_this_year_ewm_3_backshift_12
+    - New_Sales_mean_this_year_ewm_12_backshift_12
+    - New_Sales_mean_this_year_lag_12_backshift_12
+    - New_Sales_mean_this_year_pct_change_6_backshift_12
+    - New_Sales_std_this_year_pct_change_6_backshift_12
+    - New_Sales_mean_this_quarter_lag_3_backshift_12
+    - Promo_Type_Cashback
+    - New_Sales_mean_this_quarter_ewm_12_backshift_12
+    - Budget_USD_std_this_quarter_rolling_std_12
+    - Budget_USD_mean_this_quarter_lag_6
+    - New_Sales_mean_this_quarter_lag_6_backshift_12
+    - Budget_USD_mean_this_quarter_pct_change_6
+    - Budget_USD_std_this_quarter_lag_3
+    - Budget_USD_std_this_quarter_diff_6
+    - New_Sales_pct_change_12_backshift_12
+    - Budget_USD_std_this_year_lag_3
+    - Budget_USD_mean_this_year_lag_6
+    - New_Sales_mean_this_year_pct_change_12_backshift_12
+    - Budget_USD_mean_this_year_diff_12
+    - Budget_USD_std_this_quarter_ewm_12
+    - Budget_USD_std_this_quarter_lag_12
+    - New_Sales_std_this_quarter_diff_12_backshift_12
+    - Budget_USD_mean_this_year_pct_change_12
+    - New_Sales_std_this_year_rolling_std_12_backshift_12
+    - New_Sales_std_this_quarter_rolling_std_6_backshift_12
+    - New_Sales_lag_3_backshift_12
+    - New_Sales_std_this_quarter_pct_change_3_backshift_12
+    - New_Sales_std_this_quarter_backshift_12
+    - New_Sales_mean_this_quarter_pct_change_12_backshift_12
+    - New_Sales_std_this_year_pct_change_12_backshift_12
+    - Budget_USD_mean_this_year
   rnn:
     features:
     - days_since_last_promo

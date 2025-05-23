@@ -54,9 +54,9 @@ class Aggregation:
         self.org_cols = org_merge.columns
 
         # merge macro data
-        cas_wear_df = self.casual_outerwear_inflation_rate
+        cas_wear_df = self.casual_outerwear_avg_cpi
         cas_wear_df.reset_index(inplace = True)
-        cas_wear_df.rename(columns = {"index":"Date"}, inplace = True)
+        cas_wear_df.rename(columns = {"year":"Date"}, inplace = True)
         cas_wear_df = ffill_timeseries_resamp(cas_wear_df, "Date", "%Y", "MS")
 
         gold_df = self.gold_data
@@ -131,7 +131,7 @@ class Aggregation:
 
         # experimental ...
         ticker_cols = [col for col in include_feats if bool(re.match(r"(?i)close.*", col))]
-        rsi_span = [6, 12]
+        rsi_span = [6]
         agg_df = cal_rsi(agg_df, ticker_cols, rsi_span)
         logger.info("Finished generating RSI features")
 
@@ -139,11 +139,11 @@ class Aggregation:
         agg_df["has_promo"] = agg_df["Promo_Type"].apply(lambda x: 1 if x != "No_Promo" else 0)
         agg_df["budget_to_sales"] = agg_df["Budget_USD"] / agg_df["New_Sales"]
         agg_df["last_promo_time"] = agg_df.index.to_series().where(agg_df["has_promo"] == 1).ffill()
-        agg_df["days_since_last_promo"] = (agg_df.index - agg_df["last_promo_time"]).dt.days
+        agg_df["months_since_last_promo"] = (agg_df.index.year - agg_df["last_promo_time"].dt.year) * 12 + (agg_df.index.month - agg_df["last_promo_time"].dt.month)
         agg_df.drop(["last_promo_time", "has_promo"], axis = 1, inplace = True)
         logger.info("Finished generating Promo Indicators")
 
-        promo_to_keep_unchanged = ["budget_to_sales", "days_since_last_promo"] + [c for c in agg_df.columns if bool(re.match(r"(?i)(budget|promo_type).*",c))]
+        promo_to_keep_unchanged = ["budget_to_sales", "months_since_last_promo"] + [c for c in agg_df.columns if bool(re.match(r"(?i)(budget|promo_type).*",c))]
 
         # Shift back
         # all_org_cols_drop = self.org_cols + self.supp_cols
@@ -156,7 +156,7 @@ class Aggregation:
 
         # Regenerate new features for promos_unchanged:
         promo_gen_new = ["budget_to_sales"]
-        agg_df = generate_lagged_feats(agg_df, promo_gen_new + ["days_since_last_promo"], ws)
+        agg_df = generate_lagged_feats(agg_df, promo_gen_new + ["months_since_last_promo"], ws)
         agg_df = generate_rolling_std_feats(agg_df, promo_gen_new, ws)
         agg_df = generate_ewm_feats(agg_df, promo_gen_new, ws)
         agg_df = generate_diff_feats(agg_df, promo_gen_new, ws)

@@ -7,7 +7,8 @@ import lightgbm as lgb
 from catboost import CatBoostRegressor
 from sklearn.preprocessing import StandardScaler
 from tensorflow import keras
-from tensorflow.keras import layers, callbacks
+from tensorflow.keras import layers, regularizers, callbacks, optimizers, metrics, Model, Input
+
 
 warnings.filterwarnings("ignore")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -55,14 +56,17 @@ class ModelTrainer:
             val_size = 12
             X_tr, y_tr = X_seq[:-val_size], y_seq[:-val_size]
             X_val, y_val = X_seq[-val_size:], y_seq[-val_size:]
-            self.model = build_rnn(self.name, X_seq.shape[2], self.seq_len)
+            self.model = build_rnn(kind=self.name, n_f=X_seq.shape[2], seq_len=self.seq_len)
             hist = self.model.fit(X_tr, y_tr,
                                   validation_data=(X_val, y_val),
                                   epochs=100,
                                   batch_size=32,
                                   shuffle=False,
                                   verbose=1,
-                                  callbacks=[callbacks.EarlyStopping(patience=20, restore_best_weights=True)])
+                                  callbacks = [
+                                    callbacks.EarlyStopping("val_loss", patience=20, restore_best_weights=True),
+                                    callbacks.ReduceLROnPlateau("val_loss", factor=0.5, patience=3, min_lr=1e-5)
+                                ])
             joblib.dump((self.model, self.y_scaler, self.tail_X), f"{ROOT}/models/{self.name}.pkl")
             hist_dict = {k: [float(x) for x in v] for k, v in hist.history.items()}
             with open(f"{ROOT}/models/{self.name}_evaluation/training_history.json", "w") as f:
@@ -103,17 +107,42 @@ class ModelTrainer:
     def evaluate(self, y_true: Union[pd.Series, np.ndarray], y_pred: Union[pd.Series, np.ndarray]):
         yt, yp = np.asarray(y_true), np.asarray(y_pred)
         evdir = f"{ROOT}/models/{self.name}_evaluation"
-        json.dump({"rmse": mean_squared_error(yt, yp, squared=False),
-                   "mae": mean_absolute_error(yt, yp),
-                   "r2": r2_score(yt, yp),
-                   "mape": mean_absolute_percentage_error(yt, yp)},
-                  open(f"{evdir}/metrics.json", "w"), indent=2)
-        plt.scatter(yt, yp, alpha=0.6); plt.savefig(f"{evdir}/scatter.png"); plt.clf()
+        json.dump({
+            "rmse": mean_squared_error(yt, yp, squared=False),
+            "mae": mean_absolute_error(yt, yp),
+            "r2": r2_score(yt, yp),
+            "mape": mean_absolute_percentage_error(yt, yp)
+        }, open(f"{evdir}/metrics.json", "w"), indent=2)
+
+        # scatter plot
+        plt.figure(figsize=(8, 6))
+        plt.scatter(yt, yp, alpha=0.6)
+        plt.xlabel("Actual")
+        plt.ylabel("Predicted")
+        plt.title("Actual vs. Predicted")
+        plt.savefig(f"{evdir}/scatter.png")
+        plt.clf()
+
+        # time series plot
+        plt.figure(figsize=(10, 6))
         plt.plot(self.full_y.index, self.full_y.values, label="History")
         plt.plot(y_true.index, yt, label="Actual")
         plt.plot(y_true.index, yp, linestyle="--", lw=2, label="Predicted")
-        plt.legend(); plt.gcf().autofmt_xdate(); plt.savefig(f"{evdir}/timeseries.png"); plt.clf()
-        plt.hist(yt - yp, bins=30, density=True, alpha=0.7); plt.savefig(f"{evdir}/residuals.png"); plt.clf()
+        plt.legend()
+        plt.gcf().autofmt_xdate()
+        plt.title("Time Series: Actual vs. Predicted")
+        plt.savefig(f"{evdir}/timeseries.png")
+        plt.clf()
+
+        # residuals histogram
+        plt.figure(figsize=(8, 6))
+        plt.hist(yt - yp, bins=30, density=True, alpha=0.7)
+        plt.xlabel("Residual")
+        plt.ylabel("Density")
+        plt.title("Residuals Distribution")
+        plt.savefig(f"{evdir}/residuals.png")
+        plt.clf()
+
         return json.load(open(f"{evdir}/metrics.json"))
 
     def get_feature_importance(self, X_train: pd.DataFrame, save=True):
@@ -128,3 +157,29 @@ class ModelTrainer:
         if save:
             df.to_csv(f"{ROOT}/models/{self.name}_evaluation/{self.name}_feature_importance.csv", index=False)
         return df
+    
+    def generate_shap_plot(self, X_train: pd.DataFrame, y_train: pd.Series, save=True):
+        try:
+            import shap
+            self._load_model()
+            out_dir = f"{ROOT}/models/{self.name}_evaluation"
+            os.makedirs(out_dir, exist_ok=True)
+            if self.name in ("lstm", "rnn"):
+                X_seq = self._to_sequences(X_train.values, y_train.values)  
+                explainer = shap.GradientExplainer(self.model, X_seq)
+                shap_vals = explainer.shap_values(X_seq)[0]
+                shap_2d = shap_vals.mean(axis=1)
+                plot_X = pd.DataFrame(shap_2d, columns=X_train.columns)
+            else:
+                explainer = shap.TreeExplainer(self.model)
+                shap_vals = explainer.shap_values(X_train)
+                shap_2d = shap_vals
+                plot_X = X_train
+            
+            plt.figure(figsize=(12, 8))
+            shap.summary_plot(shap_2d, plot_X, show=False, max_display=30)
+            if save:
+                plt.savefig(f"{out_dir}/{self.name}_shap_summary.png", bbox_inches="tight")
+            plt.clf()
+        except Exception as e:
+            print(e)
