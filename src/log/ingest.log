@@ -1,0 +1,8 @@
+2025-05-24 10:02:04,827 WARNING From C:\Users\ACER\anaconda3\Lib\site-packages\keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2025-05-24 10:02:05,295 INFO Skipping files: ['casual_outerwear_inflation_rate.csv']
+2025-05-24 10:02:05,594 INFO Dropped 0 features by MI
+2025-05-24 10:02:05,734 INFO Dropped 5 features by VIF
+2025-05-24 10:02:06,413 INFO Dropped 168 features by MI
+2025-05-24 10:02:06,445 INFO Dropped 0 features by VIF
+2025-05-24 10:02:06,763 INFO Running catboost model with 80 features and 80 trials
