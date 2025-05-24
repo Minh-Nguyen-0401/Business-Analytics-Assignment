@@ -182,3 +182,45 @@ rnn:
     low: 0.000001
     high: 0.001
     log: true
+
+lstm_2025:
+  units:
+    type: int
+    low: 32
+    high: 256
+    log: true
+  lr:
+    type: float
+    low: 0.0001
+    high: 0.01
+    log: true
+  batch_size:
+    type: int
+    low: 16
+    high: 128
+    log: true
+  epochs:
+    type: int
+    low: 20
+    high: 100
+    log: false
+  patience:
+    type: int
+    low: 5
+    high: 20
+    log: false
+  val_size:
+    type: int
+    low: 8
+    high: 24
+    log: false
+  dropout:
+    type: float
+    low: 0.1
+    high: 0.5
+    step: 0.1
+  l2_lambda:
+    type: float
+    low: 0.000001
+    high: 0.001
+    log: true

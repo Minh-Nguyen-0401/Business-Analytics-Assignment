@@ -24,10 +24,16 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 class Ingestion:
-    def __init__(self):
+    def __init__(self, org_path = None, supp_path = None):
         self.config = self.load_config()
-        self.original_path = Path(self.config['ingest']['original_path'])
-        self.supp_path = Path(self.config['ingest']['supp_path'])
+        if org_path is None:
+            self.original_path = Path(self.config['ingest']['original_path'])
+        else:
+            self.original_path = Path(org_path)
+        if supp_path is None:
+            self.supp_path = Path(self.config['ingest']['supp_path'])
+        else:
+            self.supp_path = Path(supp_path)
         self.data_dict = defaultdict(pd.DataFrame)
 
     def load_config(self):

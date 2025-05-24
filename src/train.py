@@ -14,6 +14,7 @@ from catboost import CatBoostRegressor
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow import keras
 from tensorflow.keras import layers, callbacks, optimizers
+import re
 
 target_dir = os.path.dirname(os.path.abspath(__file__))
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -42,7 +43,7 @@ class ModelTrainer:
         units = self.params.get('units', 64 if kind == 'lstm' else 112)
         lr = self.params.get('lr', 0.007805759152905008 if kind == 'lstm' else 0.008753743880976054)
         model = keras.Sequential()
-        if kind == 'lstm':
+        if bool(re.match(r"(?i)(lstm|lstm_2025)", kind)):
             model.add(layers.LSTM(units, activation='relu', input_shape=input_shape))
         else:
             model.add(layers.SimpleRNN(units, activation='relu', input_shape=input_shape))
@@ -56,7 +57,7 @@ class ModelTrainer:
     def fit(self, X: pd.DataFrame, y: pd.Series):
         y_scaled = self.y_scaler.fit_transform(y.values.reshape(-1, 1)).ravel()
         
-        if self.name in ('lstm', 'rnn'):
+        if self.name in ('lstm', 'rnn', 'lstm_2025'):
             X_seq, y_seq, self.seq_indices = self._to_sequences(X.values, y_scaled)
             self.tail_X = X.values[-1:]
             self.tail_indices = [len(X) - 1]
@@ -156,7 +157,7 @@ class ModelTrainer:
         return self.model
 
     def predict(self, X_future: pd.DataFrame):
-        if self.name in ('lstm', 'rnn'):
+        if self.name in ('lstm', 'rnn', 'lstm_2025'):
             self._load()
             
             X_future_seq = X_future.values.reshape((X_future.values.shape[0], 1, X_future.values.shape[1]))
@@ -195,14 +196,31 @@ class ModelTrainer:
             df.to_csv(os.path.join(self.eval_dir, f'{self.name}_feature_importance.csv'), index=False)
         return df
 
-    def generate_shap_plot(self, X_train: pd.DataFrame, y_train: pd.Series, save: bool = True):
-        try:
-            import shap
-            model = self._load()
-            if self.name not in ('lstm', 'rnn'):
-                explainer = shap.TreeExplainer(model)
-                shap_vals = explainer.shap_values(X_train)
-                plt.figure(figsize=(12,8)); shap.summary_plot(shap_vals, X_train, show=False, max_display=30);
-                if save: plt.savefig(os.path.join(self.eval_dir, f'{self.name}_shap.png'), bbox_inches='tight'); plt.clf()
-        except Exception as e:
-            logger.warning(f"SHAP plot failed: {e}")
+    def generate_shap_plot(self, X_train: pd.DataFrame, save: bool = True):
+        import shap
+        model = self._load()
+        if self.name in ('lstm', 'rnn', 'lstm_2025'):
+            def f(X_flat):
+                X_seq = X_flat.reshape((-1, 1, X_flat.shape[1]))
+                return model.predict(X_seq, verbose=0).ravel()
+
+            bg = X_train.sample(n=120, random_state=42).values
+            expl = shap.KernelExplainer(f, bg)
+            shap_values = expl.shap_values(X_train.values, nsamples=100)
+        else:
+            expl = shap.TreeExplainer(model)
+            shap_values = expl.shap_values(X_train)
+
+        # 4) draw onto the current figure
+        plt.figure(figsize=(16, 8))
+        shap.summary_plot(shap_values, X_train, show=False, max_display=50)
+
+        # 5) save & close
+        if save:
+            plt.savefig(os.path.join(self.eval_dir, f'{self.name}_shap.png'),
+                        bbox_inches='tight')
+        plt.close()
+
+
+
+

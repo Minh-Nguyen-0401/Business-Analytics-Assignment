@@ -233,13 +233,13 @@ results:
     - New_Sales_mean_this_year_ewm_3_backshift_12
     params:
       depth: 4
-      learning_rate: 0.04109165773520847
-      iterations: 682
-      l2_leaf_reg: 1.044668627867743
-      random_strength: 4.3668247423947735
-      bagging_temperature: 0.5545358176701942
-      border_count: 252
-      rsm: 0.9877731843740087
+      learning_rate: 0.05856899407992348
+      iterations: 432
+      l2_leaf_reg: 4.876111485633056
+      random_strength: 0.3956876603220011
+      bagging_temperature: 0.38489042971718207
+      border_count: 181
+      rsm: 0.6298622475240189
   lstm:
     features:
     - Quarter_3
@@ -273,3 +273,30 @@ results:
       units: 112
       batch_size: 16
       patience: 10
+  lstm_2025:
+    features:
+    - Quarter_3
+    - New_Sales_lag_12
+    - Quarter_4
+    - Promo_Type_Discount
+    - Month_6
+    - Month_8
+    - Month_3
+    - Month_4
+    - Month_2
+    - Month_7
+    - Promo_Type_Cashback
+    - Year
+    - Budget_USD
+    - Month_11
+    - Month_12
+    - Month_5
+    - Month_10
+    - Quarter_2
+    - Month_9
+    - New_Sales_lag_15
+    params:
+      lr: 0.008176349697609511
+      units: 128
+      batch_size: 32
+      patience: 8

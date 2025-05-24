@@ -42,9 +42,10 @@ class HyperTuner:
             'catboost': CatBoostRegressor(verbose=0, random_state=42),
             'linear_regression': LinearRegression(),
             'rnn': lgb.LGBMRegressor(random_state=42, verbose=-1),
-            'lstm': lgb.LGBMRegressor(random_state=42, verbose=-1)
+            'lstm': lgb.LGBMRegressor(random_state=42, verbose=-1),
+            'lstm_2025': lgb.LGBMRegressor(random_state=42, verbose=-1)
         }
-        if self.name not in base_map:
+        if (self.name not in base_map):
             raise ValueError(f"PI not supported for model {self.name}")
         model_pi = base_map[self.name]
         imp = np.zeros(X.shape[1])
@@ -161,21 +162,16 @@ class HyperTuner:
                 optimizer = Adam(learning_rate=lr)
                 model.compile(optimizer=optimizer, loss='mse')
                 
-                # Early stopping callback
                 early_stopping = callbacks.EarlyStopping(
                     monitor='val_loss',
                     patience=patience,
                     restore_best_weights=True,
-                    mode='min'
-                )
-                
-                # Optuna pruning callback
+                    mode='min')
                 pruning_callback = optuna.integration.TFKerasPruningCallback(trial, 'val_loss')
-                
                 # Train the model
                 model.fit(
                     X_train, y_train,
-                    epochs=50,  # Fixed at 50 like in EDA notebook
+                    epochs=50,
                     batch_size=batch_size,
                     validation_data=(X_val, y_val),
                     callbacks=[early_stopping, pruning_callback],
