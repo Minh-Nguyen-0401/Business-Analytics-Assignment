@@ -269,10 +269,31 @@ results:
       patience: 8
   rnn:
     params:
-      lr: 0.009347386270384209
-      units: 112
+      lr: 0.00925930278071444
+      units: 96
       batch_size: 16
-      patience: 10
+      patience: 8
+    features:
+    - Quarter_3
+    - New_Sales_lag_12
+    - Quarter_4
+    - New_Sales_lag_15
+    - Promo_Type_Discount
+    - Month_8
+    - Month_3
+    - Month_6
+    - Month_9
+    - Month_10
+    - Month_11
+    - Month_12
+    - Month_4
+    - Month_2
+    - Month_7
+    - Promo_Type_Cashback
+    - Year
+    - Budget_USD
+    - Month_5
+    - Quarter_2
   lstm_2025:
     features:
     - Quarter_3

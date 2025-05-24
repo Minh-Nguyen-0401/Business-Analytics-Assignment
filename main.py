@@ -17,7 +17,7 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 warnings.filterwarnings("ignore")
 
-def main(model_name=None, n_trials=60):
+def main(model_name=None, n_trials=60, ext_pct = 0.1):
     data_dict = Ingestion().load_data()
     agg = Aggregation(data_dict, required_shiftback=12)
     merged = agg.merge_data()
@@ -43,7 +43,7 @@ def main(model_name=None, n_trials=60):
     X_org_te = org_prep.transform(X_org_te)
 
     ext_prep = CustomPreprocessor()
-    ext_prep.fit(X_ext_tr, y_tr, mi_pct=0.9)
+    ext_prep.fit(X_ext_tr, y_tr, mi_pct=(1 - ext_pct))
     X_ext_tr = ext_prep.transform(X_ext_tr)
     X_ext_te = ext_prep.transform(X_ext_te)
 
@@ -90,7 +90,7 @@ def run_traditional_model(model_name, n_features, X_tr, y_tr, X_te, y_te, n_tria
     preds = trainer.predict(X_te[feats])
     trainer.evaluate(y_te, preds)
     trainer.get_feature_importance(X_train=X_tr[feats], save=True)
-    trainer.generate_shap_plot(X_train=X_tr[feats], y_train=y_tr, save=True)
+    trainer.generate_shap_plot(X_train=X_tr[feats], save=True)
 
 def run_neural_model(model_name, n_features, X_tr, y_tr, X_te, y_te, n_trials):
     """Run a neural network model (lstm, rnn)"""
@@ -136,7 +136,7 @@ def run_neural_model(model_name, n_features, X_tr, y_tr, X_te, y_te, n_trials):
         trainer.fit(nn_X_tr[feats], nn_y_tr)
         preds = trainer.predict(nn_X_te[feats])
         trainer.evaluate(nn_y_te, preds)
-        trainer.generate_shap_plot(X_train=nn_X_tr[feats], y_train=nn_y_tr, save=True)
+        trainer.generate_shap_plot(X_train=nn_X_tr[feats], save=True)
     else:
         logging.error(f"No hyperparameters found for {model_name}")
 
@@ -145,6 +145,7 @@ if __name__ == "__main__":
     parser.add_argument('--model', type=str, help='Model to run (linear_regression, lightgbm, catboost, lstm, rnn)', 
                         choices=['linear_regression', 'lightgbm', 'catboost', 'lstm', 'rnn'])
     parser.add_argument('--trials', type=int, help='Number of trials for hyperparameter tuning', default=60)
+    parser.add_argument('--ext_pct', type=float, help='% of external data to be used', default=0.1)
     args = parser.parse_args()
     
     main(model_name=args.model, n_trials=args.trials)
