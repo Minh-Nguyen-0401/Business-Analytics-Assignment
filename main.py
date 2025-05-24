@@ -1,94 +1,150 @@
-from src.ingest import Ingestion
-from src.aggregate import Aggregation   
-from src.preprocess import FeatureSelector, CustomPreprocessor
-from src.hypertune import HyperTuner
-from src.train import ModelTrainer
-from utils.helper_func import *
-from utils.feature_generation import *
 import logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
-
 import warnings
+import re
+import argparse
+import yaml
+
+import pandas as pd
+
+from src.ingest import *
+from src.aggregate import *
+from src.preprocess import *
+from src.hypertune import *
+from src.train import *
+import os
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 warnings.filterwarnings("ignore")
 
-def main():
-    # ing = Ingestion()
-    # data_dict = ing.load_data()
-    # agg = Aggregation(data_dict)
+def main(model_name=None, n_trials=60):
+    data_dict = Ingestion().load_data()
+    agg = Aggregation(data_dict, required_shiftback=12)
+    merged = agg.merge_data()
 
-    # agg_data = agg.merge_data()
+    # separate original vs. supp data for different preprocessing schema
+    org_feats = agg.org_cols
+    org_df = agg.engineer_feats(merged[org_feats])
+    org_df_cols = org_df.columns.tolist()
+    ext_df = (
+        agg.engineer_feats(merged)
+        .drop(org_df_cols, axis=1)
+        .join(org_df["New_Sales"], how="left")
+    )
 
-    # org_agg = agg.engineer_feats(agg_data[agg.org_cols])
-    # org_agg_cols = org_agg.columns.tolist()
+    # train/test split
+    X_org_tr, y_tr, X_org_te, y_te = agg.split_train_test(org_df, target_feat="New_Sales")
+    X_ext_tr, _,  X_ext_te,  _   = agg.split_train_test(ext_df, target_feat="New_Sales")
 
-    # ext_agg = agg.engineer_feats(agg_data).drop(org_agg_cols, axis=1).merge(org_agg["New_Sales"], how="left", left_index=True, right_index=True)
+    # preprocess
+    org_prep = CustomPreprocessor()
+    org_prep.fit(X_org_tr, y_tr, mi_pct=0.0)
+    X_org_tr = org_prep.transform(X_org_tr)
+    X_org_te = org_prep.transform(X_org_te)
 
-    # X_org_train, y_train, X_org_test, y_test = agg.split_train_test(org_agg, target_feat="New_Sales")
-    # X_ext_train, y_train, X_ext_test, y_test = agg.split_train_test(ext_agg, target_feat="New_Sales")
+    ext_prep = CustomPreprocessor()
+    ext_prep.fit(X_ext_tr, y_tr, mi_pct=0.9)
+    X_ext_tr = ext_prep.transform(X_ext_tr)
+    X_ext_te = ext_prep.transform(X_ext_te)
 
-    # # Further Preprocessing
-    # pre_processor_org = CustomPreprocessor()
-    # pre_processor_org.fit(X_org_train, y_train, mi_pct = 0.0)
+    X_tr = pd.concat([X_org_tr, X_ext_tr], axis=1)
+    X_te = pd.concat([X_org_te, X_ext_te], axis=1)
 
-    # X_org_train = pre_processor_org.transform(X_org_train)
-    # X_org_test = pre_processor_org.transform(X_org_test)
-
-    # pre_processor_ext = CustomPreprocessor()
-    # pre_processor_ext.fit(X_ext_train, y_train, mi_pct = 0.7)
-    # X_ext_train = pre_processor_ext.transform(X_ext_train)
-    # X_ext_test = pre_processor_ext.transform(X_ext_test)
-
-    # X_train = pd.concat([X_org_train, X_ext_train], axis=1)
-    # X_test = pd.concat([X_org_test, X_ext_test], axis=1)
-
-    # X_train.to_csv("./temp_test_data/X_train.csv", index=True)
-    # X_test.to_csv("./temp_test_data/X_test.csv", index=True)
-    # y_train.to_csv("./temp_test_data/y_train.csv", index=True)
-    # y_test.to_csv("./temp_test_data/y_test.csv", index=True)
-
-    X_train = pd.read_csv("./temp_test_data/X_train.csv", index_col=0)
-    X_test = pd.read_csv("./temp_test_data/X_test.csv", index_col=0)
-    y_train = pd.read_csv("./temp_test_data/y_train.csv", index_col=0)["New_Sales"]
-    y_test = pd.read_csv("./temp_test_data/y_test.csv", index_col=0)["New_Sales"]
-
-    # # LR & Boosted Models
-    # feats_to_keep = {
-    #     "linear_regression" : 30,
-    #     "lightgbm" : 100,
-    #     "catboost" : 100
-    # }
-    # for model in ["linear_regression", "lightgbm", "catboost"]:
-    #     hypertuner = HyperTuner(model, feats_to_keep[model], 5)
-    #     feats = hypertuner.run_permutation_importance(X_train, y_train)
-    #     # keep all promo_type features
-    #     promo_type_feat = [col for col in X_train.columns if bool(re.match(r"(?i)(promo_type|months_since_last_promo).*",col))]
-    #     feats.extend(promo_type_feat)
-    #     print(f"Extended obligatory features: {', '.join(promo_type_feat)}")
-    #     feats = list(set(feats))
-    #     hypertuner.tune(n_trials=60)
+    # Define model configurations
+    model_configs = {
+        "linear_regression": {"features": 50, "trials": n_trials},
+        "lightgbm": {"features": 80, "trials": n_trials},
+        "catboost": {"features": 80, "trials": n_trials},
+        "lstm": {"features": 60, "trials": n_trials},
+        "rnn": {"features": 60, "trials": n_trials}
+    }
     
-    #     trainer = ModelTrainer(model)
-    #     trainer.fit(X_train[feats], y_train)
-    #     preds = trainer.predict(X_test[feats])
-    #     trainer.evaluate(y_test, preds)
-    #     trainer.get_feature_importance(X_train=X_train[feats], save=True)
-    #     trainer.generate_shap_plot(X_train=X_train[feats], y_train=y_train, save=True)
+    if model_name and model_name in model_configs:
+        if model_name in ["linear_regression", "lightgbm", "catboost"]:
+            run_traditional_model(model_name, model_configs[model_name]["features"], X_tr, y_tr, X_te, y_te, model_configs[model_name]["trials"])
+        elif model_name in ["lstm", "rnn"]:
+            run_neural_model(model_name, model_configs[model_name]["features"], X_tr, y_tr, X_te, y_te, model_configs[model_name]["trials"])
+        return
+    
+    for traditional_model, config in {k: v for k, v in model_configs.items() if k in ["linear_regression", "lightgbm"]}.items():
+        run_traditional_model(traditional_model, config["features"], X_tr, y_tr, X_te, y_te, config["trials"])
 
-    # ANN Models
-    hypertuner = HyperTuner("lstm", 120, 5)
-    feats = hypertuner.run_permutation_importance(X_train, y_train)
-    promo_type_feat = [col for col in X_train.columns if bool(re.match(r"(?i)(promo_type|months_since_last_promo).*",col))]
-    feats.extend(promo_type_feat)
-    print(f"Extended obligatory features: {', '.join(promo_type_feat)}")
-    feats = list(set(feats))
+    if not model_name or model_name == "lstm":
+        run_neural_model("lstm", model_configs["lstm"]["features"], X_tr, y_tr, X_te, y_te, model_configs["lstm"]["trials"])
 
-    for model in ["rnn", "lstm"]:
-        trainer = ModelTrainer(model)
-        trainer.fit(X_train[feats], y_train)
-        preds = trainer.predict(X_test[feats])
-        trainer.evaluate(y_test, preds)
-        trainer.generate_shap_plot(X_train=X_train[feats], y_train=y_train, save=True)
-        # trainer.get_feature_importance(X_train=X_train[feats], save=True)
+def run_traditional_model(model_name, n_features, X_tr, y_tr, X_te, y_te, n_trials):
+    """Run a traditional model (linear_regression, lightgbm, catboost)"""
+    logging.info(f"Running {model_name} model with {n_features} features and {n_trials} trials")
+    tuner = HyperTuner(model_name, n_features=n_features, ts_splits=5)
+    feats = tuner.run_permutation_importance(X_tr, y_tr)
+    # mandatory = [
+    #     c for c in X_tr.columns
+    #     if re.match(r"(?i)(promo_type|month|quarter)", c)
+    # ]
+    # feats = list(dict.fromkeys(feats + mandatory))
+    tuner.tune(n_trials=n_trials)
+
+    print(f"NUMBER OF FINAL FEATURES FOR {model_name.upper()}: {len(feats)}")
+    trainer = ModelTrainer(model_name)
+    trainer.fit(X_tr[feats], y_tr)
+    preds = trainer.predict(X_te[feats])
+    trainer.evaluate(y_te, preds)
+    trainer.get_feature_importance(X_train=X_tr[feats], save=True)
+    trainer.generate_shap_plot(X_train=X_tr[feats], y_train=y_tr, save=True)
+
+def run_neural_model(model_name, n_features, X_tr, y_tr, X_te, y_te, n_trials):
+    """Run a neural network model (lstm, rnn)"""
+    logging.info(f"Running {model_name} model with {n_features} features and {n_trials} trials")
+    
+    # Since Neural networks are more sensitive to heterogeneous features with multicollinearity
+    # We need to use only the original necessary features
+    data_dict = Ingestion().load_data()
+    agg = Aggregation(data_dict, required_shiftback=12)
+    merged = agg.merge_data()
+    
+    org_df = merged[agg.org_cols]
+    lag_ws = [12, 15]
+    org_df = generate_lagged_feats(org_df, ["New_Sales"], lag_ws)
+    org_df["Month"] = org_df.index.month.astype(str)
+    org_df["Year"] = org_df.index.year
+    org_df["Quarter"] = org_df.index.quarter.astype(str)
+    nn_X_tr, nn_y_tr, nn_X_te, nn_y_te = agg.split_train_test(org_df, target_feat="New_Sales")
+
+    # Preprocess
+    nn_preprocessor = CustomPreprocessor()
+    nn_preprocessor.fit(nn_X_tr, nn_y_tr, mi_pct = 0.0)
+    nn_X_tr = nn_preprocessor.transform(nn_X_tr)
+    nn_X_te = nn_preprocessor.transform(nn_X_te)
+
+    # Hyperparameter tuning
+    tuner = HyperTuner(model_name, n_features=n_features, ts_splits=5)
+    feats = tuner.run_permutation_importance(nn_X_tr, nn_y_tr)
+    mandatory = [
+        c for c in nn_X_tr.columns
+        if re.match(r"(?i)(month|quarter|year)", c)
+    ]
+    feats = list(dict.fromkeys(feats + mandatory))
+    tuner.tune(n_trials=n_trials)
+    
+    with open("./src/hypertune_results.yaml", "r") as f:
+        results = yaml.safe_load(f)
+    if model_name in results.get("results", {}) and "params" in results["results"][model_name]:
+        model_params = results["results"][model_name]["params"]
+        print(f"NUMBER OF FINAL FEATURES FOR {model_name.upper()}: {len(feats)}")
+
+        trainer = ModelTrainer(model_name, params=model_params)
+        trainer.fit(nn_X_tr[feats], nn_y_tr)
+        preds = trainer.predict(nn_X_te[feats])
+        trainer.evaluate(nn_y_te, preds)
+        trainer.generate_shap_plot(X_train=nn_X_tr[feats], y_train=nn_y_tr, save=True)
+    else:
+        logging.error(f"No hyperparameters found for {model_name}")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description='Sales Data Analysis')
+    parser.add_argument('--model', type=str, help='Model to run (linear_regression, lightgbm, catboost, lstm, rnn)', 
+                        choices=['linear_regression', 'lightgbm', 'catboost', 'lstm', 'rnn'])
+    parser.add_argument('--trials', type=int, help='Number of trials for hyperparameter tuning', default=60)
+    args = parser.parse_args()
+    
+    main(model_name=args.model, n_trials=args.trials)

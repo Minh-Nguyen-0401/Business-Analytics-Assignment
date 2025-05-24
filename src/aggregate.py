@@ -1,185 +1,135 @@
 import yaml
 import pandas as pd
+import numpy as np
 import os, re
-import glob
 from pathlib import Path
-from collections import defaultdict
 import logging
 import warnings
 warnings.filterwarnings("ignore")
 
+from utils.helper_func import ms_converter, ffill_timeseries_resamp
+from utils.feature_generation import (
+    generate_this_year_agg_feats,
+    generate_this_quarter_agg_feats,
+    generate_lagged_feats,
+    generate_rolling_std_feats,
+    generate_ewm_feats,
+    generate_diff_feats,
+    generate_pct_change_feats,
+    cal_rsi,
+    force_backshift
+)
+
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-root = os.path.dirname(CURRENT_DIR)
-
-import sys
-sys.path.insert(0, root)
-from utils.helper_func import *
-from utils.feature_generation import *
-
-LOG_DIR = os.path.join(os.path.dirname(__file__), 'log')
+LOG_DIR = os.path.join(CURRENT_DIR, 'log')
 os.makedirs(LOG_DIR, exist_ok=True)
-logging.basicConfig(filename=f"{LOG_DIR}/aggregate.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", filemode = "w")
+logging.basicConfig(
+    filename=f"{LOG_DIR}/aggregate.log",
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    filemode="w"
+)
 logger = logging.getLogger()
 
 class Aggregation:
-    def __init__(self, data_dict):
-        self.config = self.load_config()
+    def __init__(self, data_dict, required_shiftback=12):
+        self.config = yaml.safe_load(open(os.path.join(CURRENT_DIR, 'config.yaml')))
         self.data_dict = data_dict
+        self.required_shiftback = required_shiftback
         self.org_cols = None
         self.supp_cols = None
-    
-    def load_config(self):
-        with open(os.path.join(CURRENT_DIR, 'config.yaml'), 'r') as f:
-            config = yaml.safe_load(f)
-        return config
 
     def merge_data(self):
-        data_dict = self.data_dict
-        for key, df in data_dict.items():
-            setattr(self, key, df)
-        
-        # merge sales & promotion data
-        sales_df = ms_converter(self.sales_data, "Date", "%Y-%m-%d")
-        promo_df = ms_converter(self.promotion, "Active_Month", "%Y-%m")
-
-        org_merge = sales_df.merge(promo_df, how = "left", left_on = "Date", right_on = "Active_Month").drop("Active_Month", axis = 1)
-        org_merge.set_index("Date", inplace = True)
-        org_merge.index = org_merge.index.to_timestamp()
-        org_merge.index = org_merge.index.to_period('M').to_timestamp()
-        org_merge.sort_index(ascending = True, inplace = True)
+        sales_df = ms_converter(self.data_dict['sales_data'], "Date", "%Y-%m-%d")
+        promo_df = ms_converter(self.data_dict['promotion'], "Active_Month", "%Y-%m")
+        org_merge = (
+            sales_df
+            .merge(promo_df.drop(columns=['Promo_ID'], errors='ignore'),
+                   left_on='Date', right_on='Active_Month', how='left')
+            .drop("Active_Month", axis=1)
+        )
+        org_merge.set_index("Date", inplace=True)
+        org_merge.index = org_merge.index.to_timestamp().to_period('M').to_timestamp()
+        org_merge.sort_index(inplace=True)
         if "Unnamed: 0" in org_merge.columns:
-            org_merge.drop("Unnamed: 0", axis = 1, inplace = True)
-        org_merge.drop("Promo_ID", axis = 1, inplace = True)
+            org_merge.drop("Unnamed: 0", axis=1, inplace=True)
+        self.org_cols = org_merge.columns.tolist()
+        self.org_df = org_merge
 
-        self.org_cols = org_merge.columns
+        cas = self.data_dict['casual_outerwear_avg_cpi'].reset_index().rename(columns={'year':'Date'})
+        cas = ffill_timeseries_resamp(cas, "Date", "%Y", "MS")
 
-        # merge macro data
-        cas_wear_df = self.casual_outerwear_avg_cpi
-        cas_wear_df.reset_index(inplace = True)
-        cas_wear_df.rename(columns = {"year":"Date"}, inplace = True)
-        cas_wear_df = ffill_timeseries_resamp(cas_wear_df, "Date", "%Y", "MS")
+        indus = self.data_dict['industry_data'].reset_index().rename(columns={'index':'Date'})
+        indus["Date"] = pd.to_datetime(indus["Date"], format="%Y-%m-%d")
+        indus.set_index("Date", inplace=True)
+        indus.index = indus.index.to_period('M').to_timestamp()
 
-        gold_df = self.gold_data
-        indus_df = self.industry_data
-        mac_df = self.macro_data
-        ticker_df = self.rel_tickers_data
+        gold = self.data_dict['gold_data']
+        mac  = self.data_dict['macro_data']
+        tick = self.data_dict['rel_tickers_data']
+        for df in (gold, mac, tick):
+            df.index = pd.to_datetime(df.index, format="%Y-%m-%d").to_period('M').to_timestamp()
+        gold.columns = [f"{c}_gold" for c in gold.columns]
 
-        indus_df.reset_index(inplace=True)
-        indus_df.rename(columns = {"index":"Date"}, inplace = True)
-        indus_df["Date"] = pd.to_datetime(indus_df["Date"], format="%Y-%m-%d")
-        indus_df.set_index("Date", inplace = True)
-        indus_df.index = indus_df.index.to_period('M').to_timestamp()
+        agg_macro = cas.merge(gold,    left_index=True, right_index=True, how='outer')
+        agg_macro = agg_macro.merge(indus,left_index=True, right_index=True, how='outer')
+        agg_macro = agg_macro.merge(mac,   left_index=True, right_index=True, how='outer')
+        agg_macro = agg_macro.merge(tick,  left_index=True, right_index=True, how='outer')
+        agg_macro.sort_index(inplace=True)
+        self.supp_cols = agg_macro.columns.tolist()
 
-        for df in [gold_df, mac_df, ticker_df]:
-            df.index = pd.to_datetime(df.index, format="%Y-%m-%d").to_period("M").to_timestamp()
-        
-        gold_df.columns = [f"{col}_gold" for col in gold_df.columns]
-        agg_macro_df = pd.merge(cas_wear_df, gold_df, how="outer", left_index=True, right_index=True)
-        agg_macro_df = pd.merge(agg_macro_df, indus_df, how="outer", left_index=True, right_index=True)
-        agg_macro_df = pd.merge(agg_macro_df, mac_df, how="outer", left_index=True, right_index=True)
-        agg_macro_df = pd.merge(agg_macro_df, ticker_df, how="outer", left_index=True, right_index=True)
-        agg_macro_df.sort_index(ascending = True, inplace = True)
+        return org_merge.merge(agg_macro, left_index=True, right_index=True, how='outer')
 
-        self.supp_cols = agg_macro_df.columns
+    def engineer_feats(self, agg_df):
+        df = agg_df.copy()
+        df.index = df.index.to_period('M').to_timestamp()
+        df['Year'] = df.index.year
+        df['Month'] = df.index.month.astype(str)
+        df['Quarter'] = df.index.quarter.astype(str)
+        for period, freq in (('month',12), ('quarter',4)):
+            df[f'{period}_sin'] = np.sin(2*np.pi*(getattr(df.index,period)-1)/freq)
+            df[f'{period}_cos'] = np.cos(2*np.pi*(getattr(df.index,period)-1)/freq)
 
-        # merge data
-        agg_df = pd.merge(org_merge, agg_macro_df, how="outer", left_index=True, right_index=True)
-        return agg_df
-    
-    def engineer_feats(self, agg_df, required_shiftback=12):
-        """_summary_
+        df['Budget_USD'].fillna(0, inplace=True)
+        df['Promo_Type'].fillna('No_Promo', inplace=True)
 
-        During inference, we need to shift back N months to calculate the input features for the testing/forecasting
-        Args:
-            agg_df (_type_): _description_
-        """
-        self.required_shiftback = required_shiftback
+        exclude = ['Promo_Type','Year','Month','Quarter',
+                   'month_sin','month_cos','quarter_sin','quarter_cos']
+        df, _ = generate_this_year_agg_feats(df, ["Budget_USD", "New_Sales"], ['Year'])
+        df, _ = generate_this_quarter_agg_feats(df, ["Budget_USD", "New_Sales"], ['Year','Quarter'])
 
-        # Time-based features
-        agg_df["Year"] = agg_df.index.year
-        agg_df["Month"] = agg_df.index.month
-        agg_df["Quarter"] = agg_df.index.quarter
-        logger.info("Finished generating time-based features")
+        ws = self.config.get('aggregation',{}).get('lags',[3,6,12])
+        feats = df.columns.difference(exclude).tolist()
+        for fn in (generate_lagged_feats,
+                #    generate_rolling_std_feats,
+                   generate_ewm_feats,
+                #    generate_diff_feats,
+                #    generate_pct_change_feats
+                   ):
+            df = fn(df, feats, ws)
 
-        # Fillna for necessary columns
-        agg_df["Budget_USD"] = agg_df["Budget_USD"].fillna(0)
-        agg_df["Promo_Type"] = agg_df["Promo_Type"].fillna("No_Promo")
+        closes = [c for c in feats if re.match(r'(?i)^close', c)]
+        df = cal_rsi(df, closes, self.config.get('aggregation',{}).get('rsi_windows',[6]))
 
-        exclude_feats = [
-                'Promo_Type',
-                'Year',
-                'Month',
-                'Quarter'
-            ]
-        # Generate directly last year agg features & YoY
-        agg_df, this_year_agg_feats = generate_this_year_agg_feats(agg_df, agg_df.columns.difference(exclude_feats+["Month","Quarter"]), ["Year"])
-        agg_df, this_qrt_agg_feats = generate_this_quarter_agg_feats(agg_df, agg_df.columns.difference(exclude_feats+this_year_agg_feats+["Month"]), ["Year","Quarter"])
-        logger.info("Finished generating agg_facts this year/quarter")
+        df['budget_to_sales'] = df['Budget_USD'] / df['New_Sales']
+        last = df.index.to_series().where(df['Promo_Type']!='No_Promo').ffill()
+        df['months_since_last_promo'] = ((df.index.year-last.dt.year)*12 +
+                                        (df.index.month-last.dt.month))
 
-        # Mass feature gen
-        ws = [3, 6, 12]
-        
-        include_feats = agg_df.columns.difference(exclude_feats).tolist()
+        static = ['months_since_last_promo'] + [c for c in df.columns if re.match(r"(?i)budget_usd.*", c)]
+        back_cols = df.columns.difference(exclude+static+['New_Sales']).tolist()
+        df, shifted = force_backshift(df, back_cols, self.required_shiftback)
 
-        agg_df = generate_lagged_feats(agg_df, include_feats, ws)
-        agg_df = generate_rolling_std_feats(agg_df, include_feats, ws)
-        agg_df = generate_ewm_feats(agg_df, include_feats, ws)
-        agg_df = generate_diff_feats(agg_df, include_feats, ws)
-        agg_df = generate_pct_change_feats(agg_df, include_feats, ws)
+        keep = static + exclude + ['New_Sales'] + shifted
+        df = df[keep].iloc[self.required_shiftback:]
+        self.agg_features = df.columns.tolist()
+        return df
 
-        logger.info("Finished generating mass_gen features")
-
-        # experimental ...
-        ticker_cols = [col for col in include_feats if bool(re.match(r"(?i)close.*", col))]
-        rsi_span = [6]
-        agg_df = cal_rsi(agg_df, ticker_cols, rsi_span)
-        logger.info("Finished generating RSI features")
-
-        # Promo Indicators
-        agg_df["has_promo"] = agg_df["Promo_Type"].apply(lambda x: 1 if x != "No_Promo" else 0)
-        agg_df["budget_to_sales"] = agg_df["Budget_USD"] / agg_df["New_Sales"]
-        agg_df["last_promo_time"] = agg_df.index.to_series().where(agg_df["has_promo"] == 1).ffill()
-        agg_df["months_since_last_promo"] = (agg_df.index.year - agg_df["last_promo_time"].dt.year) * 12 + (agg_df.index.month - agg_df["last_promo_time"].dt.month)
-        agg_df.drop(["last_promo_time", "has_promo"], axis = 1, inplace = True)
-        logger.info("Finished generating Promo Indicators")
-
-        promo_to_keep_unchanged = ["budget_to_sales", "months_since_last_promo"] + [c for c in agg_df.columns if bool(re.match(r"(?i)(budget|promo_type).*",c))]
-
-        # Shift back
-        # all_org_cols_drop = self.org_cols + self.supp_cols
-        backshift_cols = agg_df.columns.difference(promo_to_keep_unchanged + ["Year", "Month", "Quarter"]).tolist()
-        agg_df, bshifted_feats = force_backshift(agg_df, backshift_cols, required_shiftback)
-
-        # Keep all promo_cols to date
-        agg_df.drop(agg_df.columns.difference(bshifted_feats + promo_to_keep_unchanged + ["New_Sales", "Year", "Month", "Quarter"]).tolist(), axis=1, inplace=True)
-        logger.info(f"Finished shifting back predictive features {required_shiftback} months")
-
-        # Regenerate new features for promos_unchanged:
-        promo_gen_new = ["budget_to_sales"]
-        agg_df = generate_lagged_feats(agg_df, promo_gen_new + ["months_since_last_promo"], ws)
-        agg_df = generate_rolling_std_feats(agg_df, promo_gen_new, ws)
-        agg_df = generate_ewm_feats(agg_df, promo_gen_new, ws)
-        agg_df = generate_diff_feats(agg_df, promo_gen_new, ws)
-        agg_df = generate_pct_change_feats(agg_df, promo_gen_new, ws)        
-
-        # Drop N first rows
-        agg_df = agg_df.iloc[required_shiftback:]
-        self.agg_featurees = agg_df.columns.tolist()
-        return agg_df
-    
-    def split_train_test(self, agg_df, target_feat=None):
+    def split_train_test(self, df, target_feat=None):
         span = self.required_shiftback
-        train_df = agg_df[:-span]
-        test_df = agg_df[-span:]
-
-        self.train_set = train_df
-        self.test_set = test_df
-        if target_feat is None:
-            return train_df, test_df
-        else:
-            X_train, X_test = train_df.drop(target_feat, axis=1), test_df.drop(target_feat, axis=1)
-            y_train, y_test = train_df[target_feat], test_df[target_feat]
-            return X_train, y_train, X_test, y_test
-
-
-        
+        train, test = df.iloc[:-span], df.iloc[-span:]
+        self.train_set, self.test_set = train, test
+        if target_feat:
+            return (train.drop(target_feat,axis=1), train[target_feat],
+                    test.drop(target_feat,axis=1),  test[target_feat])
+        return train, test

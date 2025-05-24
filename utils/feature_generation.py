@@ -54,7 +54,7 @@ def generate_this_year_agg_feats(df, col_list, groupby_cols):
     if 'Year' not in df_copy.columns:
         df_copy['Year'] = df_copy.index.year
     year_groupby = [c for c in groupby_cols if c.lower() == 'year']
-    agg = df_copy.groupby(year_groupby)[col_list].agg(['mean','std'])
+    agg = df_copy.groupby(year_groupby)[col_list].agg(['mean', 'std'])
     agg.columns = [f"{col}_{stat}_this_year" for col, stat in agg.columns]
     agg.reset_index(inplace=True)
     df_merged = df_copy.reset_index().merge(agg, how='left', on=year_groupby).set_index(df_copy.index.name)

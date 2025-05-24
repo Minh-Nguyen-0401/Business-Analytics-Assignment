@@ -1,61 +1,56 @@
+# src/ingest.py
+
 import yaml
 import pandas as pd
-import os, re
-import glob
 from pathlib import Path
 from collections import defaultdict
 import logging
 import warnings
 warnings.filterwarnings("ignore")
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-root = os.path.dirname(CURRENT_DIR)
-
+CURRENT_DIR = Path(__file__).resolve().parent
 import sys
-sys.path.insert(0, root)
+sys.path.insert(0, str(CURRENT_DIR.parent))
 from utils.helper_func import *
 
-LOG_DIR = os.path.join(os.path.dirname(__file__), 'log')
-os.makedirs(LOG_DIR, exist_ok=True)
-logging.basicConfig(filename=f"{LOG_DIR}/ingest.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", filemode = "w")
+LOG_DIR = CURRENT_DIR / 'log'
+LOG_DIR.mkdir(exist_ok=True)
+logging.basicConfig(
+    filename=str(LOG_DIR / 'ingest.log'),
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    filemode="w"
+)
 logger = logging.getLogger()
 
 class Ingestion:
     def __init__(self):
         self.config = self.load_config()
-        self.original_path = self.config['ingest']['original_path']
-        self.supp_path = self.config['ingest']['supp_path']
-        self.data_dict = defaultdict()
+        self.original_path = Path(self.config['ingest']['original_path'])
+        self.supp_path = Path(self.config['ingest']['supp_path'])
+        self.data_dict = defaultdict(pd.DataFrame)
 
     def load_config(self):
-        with open(os.path.join(CURRENT_DIR, 'config.yaml'), 'r') as f:
-            config = yaml.safe_load(f)
-        return config
-        
+        with open(CURRENT_DIR / 'config.yaml') as f:
+            return yaml.safe_load(f)
+
     def load_data(self):
-        data_dict = defaultdict()
-        # Load original data
-        org_pathfiles_list = Path(self.original_path).rglob('*.csv')
-        org_pathfiles_list = [str(path) for path in org_pathfiles_list]
-        file_names = [os.path.basename(path).split('.')[0].lower() for path in org_pathfiles_list]
-        for name, path in zip(file_names, org_pathfiles_list):
-            data_dict[name] = pd.read_csv(path)
-        
+        data_dict = defaultdict(pd.DataFrame)
+
+        # Load org data
+        for csv_file in self.original_path.rglob('*.csv'):
+            key = csv_file.stem.lower()
+            data_dict[key] = pd.read_csv(csv_file)
+
         # Load supp data
-        supp_pathfiles_list = Path(self.supp_path).rglob('*.csv')
-        supp_pathfiles_list = [str(path) for path in supp_pathfiles_list]
-        test_1 = supp_pathfiles_list.copy()
-        supp_pathfiles_list.remove([f for f in supp_pathfiles_list if bool(re.match(r".*casual_outerwear_inflation_rate.csv$",f))][0]) 
-        print(f"Removed {[f for f in test_1 if f not in supp_pathfiles_list]}")
-        file_names = [os.path.basename(path).split('.')[0].lower() for path in supp_pathfiles_list]
-        for name, path in zip(file_names, supp_pathfiles_list):
-            data_dict[name] = pd.read_csv(path,index_col=0)
-        
+        all_supp = list(self.supp_path.rglob('*.csv'))
+        skip = [p for p in all_supp if p.match('*casual_outerwear_inflation_rate.csv')]
+        supp_files = [p for p in all_supp if p not in skip]
+        logger.info(f"Skipping files: {[s.name for s in skip]}")
+
+        for csv_file in supp_files:
+            key = csv_file.stem.lower()
+            data_dict[key] = pd.read_csv(csv_file, index_col=0)
+
         self.data_dict = data_dict
         return data_dict
-
-        
-
-
-        
-        
