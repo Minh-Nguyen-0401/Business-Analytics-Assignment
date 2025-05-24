@@ -1,6 +1,6 @@
 # Sales Data Analysis and Forecasting
 
-An advanced machine learning pipeline for sales forecasting and analysis with multiple model options, hyperparameter tuning, and flexible execution.
+An machine learning pipeline for sales forecasting and analysis with multiple model implementation options.
 
 ## Project Overview
 
