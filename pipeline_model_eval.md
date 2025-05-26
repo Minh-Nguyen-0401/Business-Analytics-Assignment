@@ -4,100 +4,10 @@
 
 ## Pipeline Overview
 
+![End-to-End Model Pipeline](./E2E_model_pipeline.png)
+
 </div>
 
-```mermaid
-flowchart TD
-  %% === Raw Data ===
-  subgraph RawData["Raw Data"]
-    direction TB
-    A1["Original Data: Sales & Promo CSVs"]
-    A2["Supplementary Data: Macro, CPI, Industry, Tickers"]
-  end
-  style RawData fill:#FFD3B6,stroke:#FFAAA5,stroke-width:2px
-
-  %% === Ingestion ===
-  A1 --> B["Ingestion: src/ingest.py"]
-  A2 --> B
-  style B fill:#FFE0B2,stroke:#FFCC80,stroke-width:2px
-
-  %% === Data Warehouse ===
-  B --> C["Data Warehouse: Temporary Local Storage"]
-  style C fill:#FFCDD2,stroke:#EF9A9A,stroke-width:2px
-
-  %% === Aggregation & Feature Engineering ===
-  C --> D["Aggregation & Feature Eng: src/aggregate.py"]
-  style D fill:#E1BEE7,stroke:#CE93D8,stroke-width:2px
-
-  D --> E["Leakage Guard: 12-month backshift"]
-  style E fill:#E1BEE7,stroke:#CE93D8,stroke-width:2px
-
-  E --> F["Output: .agg_features (parquet/csv)"]
-  style F fill:#E1BEE7,stroke:#CE93D8,stroke-width:2px
-
-  %% === Preprocessing & Feature Selection ===
-  subgraph Preproc["Preprocessing & Feature Selection"]
-    direction TB
-    F
-    G["Preprocessing: src/preprocess.py"]
-    H["Feature Selection: MI & VIF"]
-  end
-  style Preproc fill:#C8E6C9,stroke:#A5D6A7,stroke-width:2px
-
-  %% === Hyperparameter Tuning ===
-  subgraph Tune["Hyperparameter Tuning"]
-    direction TB
-    I["Optuna Tuning: src/hypertune.py"]
-    J["Best Params (Serialized)"]
-  end
-  style Tune fill:#BBDEFB,stroke:#64B5F6,stroke-width:2px
-
-  %% === Model Training ===
-  subgraph Modeling["Model Training"]
-    direction TB
-    M1["LSTM & RNN: src/train.py"]
-    M2["Linear Reg: src/train.py"]
-    M3["LightGBM: src/train.py"]
-    M4["CatBoost: src/train.py"]
-  end
-  style Modeling fill:#FFECB3,stroke:#FFE082,stroke-width:2px
-
-  %% === Artifacts ===
-  M1 --> K1["LSTM Model & Scaler\n(models/*.pkl)"]
-  M1 --> L1["LSTM Metrics & Plots\n(models/lstm_evaluation/)"]
-  M2 --> K2["LR Model\n(models/linear_regression_model.pkl)"]
-  M2 --> L2["LR Metrics & Plots\n(models/linear_regression_evaluation/)"]
-  M3 --> K3["LGBM Model\n(models/lightgbm_model.pkl)"]
-  M3 --> L3["LGBM Metrics & Plots\n(models/lightgbm_evaluation/)"]
-  M4 --> K4["CatBoost Model\n(models/catboost_model.pkl)"]
-  M4 --> L4["CatBoost Metrics & Plots\n(models/catboost_evaluation/)"]
-  style K1,K2,K3,K4,L1,L2,L3,L4 fill:#DCEDC8,stroke:#A5D6A7,stroke-width:2px
-
-  %% === SHAP & Interpretability ===
-  K1 & K2 & K3 & K4 --> N["SHAP Analysis (Tree/Deep Explainers)"]
-  style N fill:#FFE0B2,stroke:#FFCC80,stroke-width:2px
-
-  N --> O["SHAP Plots\n(models/*_evaluation/*shap.png)"]
-  style O fill:#FFE0B2,stroke:#FFCC80,stroke-width:2px
-
-  %% === Orchestration ===
-  B & D & G & I & M1 & M2 & M3 & M4 --> P["main.py CLI Entrypoint"]
-  style P fill:#FFCCBC,stroke:#FFAB91,stroke-width:2px
-
-  P -->|--model| M1 & M2 & M3 & M4
-  P -->|--all| B
-
-  %% === Environment ===
-  subgraph Env["Environment"]
-    direction TB
-    Q["environment.yml"]
-    R["config.yaml & search_space.yaml"]
-  end
-  style Env fill:#F0F4C3,stroke:#E6EE9C,stroke-width:2px
-
-  Q & R --> P
-
-```
 
 ## Table of Contents
 1. Repository Structure
