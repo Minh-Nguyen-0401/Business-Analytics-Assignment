@@ -6,6 +6,14 @@ An machine learning pipeline for sales forecasting and analysis with multiple mo
 
 This project implements a comprehensive sales forecasting system using both traditional machine learning and neural network approaches. The pipeline includes data ingestion, preprocessing, feature engineering, model training, hyperparameter optimization, and evaluation.
 
+<div align="center">
+
+### End-to-End Model Pipeline
+
+![End-to-End Model Pipeline](./E2E_model_pipeline.png)
+
+</div>
+
 ## Key Features
 
 - **Multiple Model Support**: Linear Regression, LightGBM, CatBoost, LSTM, and RNN
