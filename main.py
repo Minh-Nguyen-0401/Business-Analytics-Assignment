@@ -26,13 +26,10 @@ def main(model_name=None, n_trials=60, ext_pct = 0.1):
     org_feats = agg.org_cols
     org_df = agg.engineer_feats(merged[org_feats])
     org_df_cols = org_df.columns.tolist()
-    ext_df = (
-        agg.engineer_feats(merged)
-        .drop(org_df_cols, axis=1)
+    ext_df = agg.engineer_feats(merged)\
+        .drop(org_df_cols, axis=1)\
         .join(org_df["New_Sales"], how="left")
-    )
 
-    # train/test split
     X_org_tr, y_tr, X_org_te, y_te = agg.split_train_test(org_df, target_feat="New_Sales")
     X_ext_tr, _,  X_ext_te,  _   = agg.split_train_test(ext_df, target_feat="New_Sales")
 
@@ -148,4 +145,4 @@ if __name__ == "__main__":
     parser.add_argument('--ext_pct', type=float, help='% of external data to be used', default=0.1)
     args = parser.parse_args()
     
-    main(model_name=args.model, n_trials=args.trials)
+    main(model_name=args.model, n_trials=args.trials, ext_pct=args.ext_pct)
