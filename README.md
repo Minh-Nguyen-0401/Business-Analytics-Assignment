@@ -121,11 +121,3 @@ models/
 ### Target Variable Scaling
 - Consistent MinMaxScaler application across all models
 - Properly handles the increasing trend in sales data
-
-## Future Improvements
-
-- Ensemble methods combining multiple models
-- More advanced feature engineering
-- Automated retraining schedule
-- Model explainability enhancements
-- Online learning capabilities
