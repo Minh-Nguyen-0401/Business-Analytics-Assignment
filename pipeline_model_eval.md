@@ -4,7 +4,7 @@
 
 ## Pipeline Overview
 
-![End-to-End Model Pipeline](./E2E_model_pipeline.png)
+![End-to-End Model Pipeline](./img/E2E_model_pipeline.png)
 
 </div>
 
