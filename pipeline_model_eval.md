@@ -1,3 +1,11 @@
+---
+title: "Model Pipeline & Evaluation"
+author: "Minh Nguyen"
+mainfont: "Cambria"
+fontsize: 10pt
+geometry: a4paper, margin=2cm
+---
+
 # Section A. End-to-End Sales Forecasting Model Preparation & Construction Pipeline
 
 <div align="center">
@@ -7,7 +15,6 @@
 ![End-to-End Model Pipeline](./img/E2E_model_pipeline.png)
 
 </div>
-
 
 ## Table of Contents
 1. Repository Structure
@@ -203,12 +210,14 @@
 - Handles TreeExplainer/DeepExplainer as appropriate
 
 ### 7.4 Model Prediction & Evaluation Note
+
 - With each model, training history, prediction outcome (time series with history), evaluation metrics, feature importance, and SHAP summaries are saved in `models/{name}_evaluation`.
+
 ---
 
 ## 8. Main Pipeline Entrypoint (`main.py`)
 
-- Usage:
+- **Usage**:
   ```bash
   python main.py                       # Run all models
   python main.py --model catboost      # Only CatBoost
@@ -227,7 +236,7 @@
 
 ## 9. Environment & Reproducibility
 
-- Setup:
+- **Setup**:
   ```bash
   conda env create -f environment.yml
   conda activate (env_name)
@@ -247,6 +256,7 @@
 The decision to incorporate LightGBM (LGBM) and CatBoost alongside LSTM, RNN, and Linear Regression models stems primarily from their inherent strengths in handling complex, high-dimensional datasets, which is characteristic of our sales forecasting task involving numerous internal and external features.
 
 Key reasons include:
+
 - **Robustness to Multicollinearity**: Tree-based models like LGBM and CatBoost are generally less sensitive to multicollinearity among features compared to linear models or even some neural network architectures. Their decision tree structure naturally selects the most informative features at each split, effectively downplaying redundant or highly correlated inputs. This is particularly beneficial when exploring the impact of a wide array of macroeconomic indicators, where intercorrelations are common.
 - **Feature Importance and Interpretability**: Both models provide robust mechanisms for evaluating feature importance (e.g., gain, split count, SHAP values). This allows for a deeper understanding of which factors - both internal sales drivers and external economic indicators - most significantly influence sales predictions. This aligns with our goal to test the usefulness of external/macro indices.
 - **Handling of Categorical Features**: CatBoost, in particular, has sophisticated built-in handling for categorical features, often outperforming traditional one-hot encoding or label encoding, especially with high-cardinality categorical variables.
@@ -369,7 +379,7 @@ For the boosted tree models (LGBM and CatBoost), the results are within a relati
 
 ## 3. Feature Importance Analysis
 
-### Insights from LSTM
+### **Insights from LSTM**
 When feature importance is extracted from our most effective model (LSTM), "Year" seemingly emerges as one of the most impactful features. This suggests that as the year increases, the model's output tends towards a higher sales figure. While this factor is uncontrollable from a business practitioner's standpoint, it likely captures underlying trends, market growth, or long-term inflationary effects not fully encapsulated by other features.
 
 Otherwise, the presence of promotions also demonstrates a positive impact on product sales. Seasonality patterns, often peaking at the beginning of the year, show a more dramatic surge in sales compared to other periods. Furthermore, lagged sales features (e.g., sales patterns shifted back by at least 12 months) have a discernible impact on current sales. This resonates with the "importance" of the "Year" feature, as both point to strong temporal dependencies and trends.
@@ -382,7 +392,7 @@ Otherwise, the presence of promotions also demonstrates a positive impact on pro
 
 </div>
 
-### Insights from Boosted Trees (LGBM & CatBoost) and Linear Regression
+### **Insights from Boosted Trees (LGBM & CatBoost) and Linear Regression**
 Similarly, aside from the "feature insights" shared above from LSTM, the boosted tree models (and even the Linear Regression model, which achieved a decent score) also highlight that several external features are formidable and demonstrate relevancy with sales performance.
 
 <div align="center">
