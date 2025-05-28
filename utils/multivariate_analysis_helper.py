@@ -21,18 +21,18 @@ class SalesPerformanceAnalysis(MultiVarAnalysisStrategy):
 
         # redefine time bounds
         min_ts, max_ts = time_bounds
-        min_ts = data_copy["Date_ts"].min() if min_ts is None else min_ts
-        max_ts = data_copy["Date_ts"].max() if max_ts is None else max_ts
-        data_copy = data_copy[data_copy["Date_ts"].between(min_ts, max_ts)]
+        min_ts = data_copy["Date"].min() if min_ts is None else min_ts
+        max_ts = data_copy["Date"].max() if max_ts is None else max_ts
+        data_copy = data_copy[data_copy["Date"].between(min_ts, max_ts)]
 
         fig, axes = plt.subplots(nrows = 2, ncols = 1, figsize=(24,12), sharex=True)
         fig.suptitle(f"\n{granularity.capitalize()} Sales Overview", fontsize=24, fontweight="bold", family="Cambria")
         axes = axes.flatten()
 
         group_dict = {
-            "year_monthly" : ["Date_ts"],
+            "year_monthly" : ["Date"],
             "year_quarterly" : ["Year", "Quarter"],
-            "half_yearly" : ["Year", "half_year"],
+            "half_yearly" : ["Year", "Half_Year"],
             "yearly" : ["Year"],
             "ovr_monthly": ["Month"],
             "ovr_quarterly": ["Quarter"]
