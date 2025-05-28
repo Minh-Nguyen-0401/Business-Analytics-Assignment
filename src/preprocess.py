@@ -153,7 +153,7 @@ class CustomPreprocessor(BaseEstimator, TransformerMixin):
             
             if num_transformed:
                 if self.conf.get('winsorize'):
-                    existing_num = [f for f in num_transformed if f in Xt.columns]
+                    existing_num = [f for f in num_transformed if f in Xt.columns if "Budget_USD" not in f]
                     if existing_num:
                         Xt_selected, self.bounds = self.sel.winsorize(Xt[existing_num])
                         Xt[existing_num] = Xt_selected
