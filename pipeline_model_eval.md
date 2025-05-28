@@ -319,7 +319,7 @@ Even with the same basic features as LSTM, the RNN model was unable to extract a
 </div>
 
 **Linear Regression:**
-For Linear Regression, more detailed and fine-tuned features were generated. Consequently, its error (RMSE) is only moderately higher (around 50-60 RMSE points) than the LSTM results.
+For Linear Regression, more detailed and fine-tuned features were generated. Consequently, its error (RMSE) is only moderately higher (around 140 RMSE points) than the LSTM results.
 
 **Evaluation Metrics (Linear Regression):**
 ```json

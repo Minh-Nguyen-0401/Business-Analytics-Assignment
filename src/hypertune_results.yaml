@@ -243,57 +243,62 @@ results:
   lstm:
     features:
     - Promo_Type_No_Promo
-    - Quarter_3
     - New_Sales_lag_12
+    - Quarter_3
+    - Residual_lag
     - Quarter_4
     - Month_10
     - Month_3
-    - Month_12
-    - Month_9
-    - Month_4
-    - Month_2
     - Month_7
-    - Month_8
+    - Month_2
+    - Month_9
+    - Month_12
     - Month_6
+    - Month_8
+    - Month_4
     - Month_11
     - Month_5
     - Promo_Type_Cashback
     - Year
     - Budget_USD
     - Promo_Type_Discount
-    - Quarter_2
+    - Trend_lag
     - New_Sales_lag_15
+    - Quarter_2
     params:
-      lr: 0.007814462810033205
-      units: 80
+      lr: 0.007579982674978019
+      units: 64
       batch_size: 16
       patience: 12
   rnn:
     params:
-      lr: 0.00925930278071444
-      units: 96
-      batch_size: 16
+      lr: 0.008154620669941177
+      units: 128
+      batch_size: 32
       patience: 8
     features:
-    - Quarter_3
+    - Promo_Type_No_Promo
     - New_Sales_lag_12
+    - Quarter_3
+    - Residual_lag
     - Quarter_4
-    - New_Sales_lag_15
-    - Promo_Type_Discount
-    - Month_8
-    - Month_3
-    - Month_6
-    - Month_9
     - Month_10
-    - Month_11
-    - Month_12
-    - Month_4
-    - Month_2
+    - Month_3
     - Month_7
+    - Month_2
+    - Month_9
+    - Month_12
+    - Month_6
+    - Month_8
+    - Month_4
+    - Month_11
+    - Month_5
     - Promo_Type_Cashback
     - Year
     - Budget_USD
-    - Month_5
+    - Promo_Type_Discount
+    - Trend_lag
+    - New_Sales_lag_15
     - Quarter_2
   lstm_2025:
     features:

@@ -106,7 +106,10 @@ def run_neural_model(model_name, n_features, X_tr, y_tr, X_te, y_te, n_trials):
     org_df["Year"] = org_df.index.year
     org_df["Quarter"] = org_df.index.quarter.astype(str)
     # org_df["Half_Year"] = (org_df.index.month.astype(int)//6 + 1).astype(str)
+
     # org_df["Seasonality_lag"] = seasonal_decompose(org_df["New_Sales"], model="additive", period=12).seasonal.shift(12)
+    org_df["Trend_lag"] = seasonal_decompose(org_df["New_Sales"], model="additive", period=12).trend.shift(12)
+    org_df["Residual_lag"] = seasonal_decompose(org_df["New_Sales"], model="additive", period=12).resid.shift(12)
 
     # imputation for necessary columns:
     org_df["Promo_Type"] = org_df["Promo_Type"].fillna("No_Promo")
