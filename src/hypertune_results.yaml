@@ -303,28 +303,30 @@ results:
   lstm_2025:
     features:
     - Promo_Type_No_Promo
-    - Quarter_3
     - New_Sales_lag_12
+    - Quarter_3
+    - Residual_lag
     - Quarter_4
     - Month_10
-    - Month_3
     - Month_7
     - Month_8
-    - Month_4
+    - Month_3
     - Month_11
-    - Month_12
-    - Month_2
-    - Month_6
-    - Promo_Type_Discount
     - Month_9
+    - Month_6
+    - Month_4
+    - Month_2
+    - Promo_Type_Discount
+    - Month_12
+    - Month_5
     - Promo_Type_Cashback
     - Year
     - Budget_USD
-    - Month_5
+    - Trend_lag
     - Quarter_2
     - New_Sales_lag_15
     params:
-      lr: 0.007671352785077888
+      lr: 0.009396749105898716
       units: 96
-      batch_size: 32
-      patience: 8
+      batch_size: 16
+      patience: 10

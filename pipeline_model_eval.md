@@ -274,10 +274,10 @@ LSTM is our best performing model with minimal errors after proper hypertuning. 
 **Evaluation Metrics:**
 ```json
 {
-  "rmse": 244.46578127494334,
-  "mae": 148.88405590900112,
-  "r2": 0.773839061154159,
-  "mape": 0.05964158804679398
+  "rmse": 167.69194390599253,
+  "mae": 91.81765157844296,
+  "r2": 0.8935842670491309,
+  "mape": 0.035481296225023475
 }
 ```
 
@@ -304,10 +304,10 @@ Even with the same basic features as LSTM, the RNN model was unable to extract a
 **Evaluation Metrics (RNN):**
 ```json
 {
-  "rmse": 421.1416088943076,
-  "mae": 247.21269190679922,
-  "r2": 0.3288219481569292,
-  "mape": 0.09500211389097346
+  "rmse": 310.90511607981733,
+  "mae": 195.645882905967,
+  "r2": 0.6342054930044944,
+  "mape": 0.07737790234768792
 }
 ```
 <div align="center">
