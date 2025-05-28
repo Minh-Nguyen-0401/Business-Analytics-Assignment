@@ -278,10 +278,10 @@ LSTM is our best performing model with minimal errors after proper hypertuning. 
 **Evaluation Metrics:**
 ```json
 {
-  "rmse": 167.69194390599253,
-  "mae": 91.81765157844296,
-  "r2": 0.8935842670491309,
-  "mape": 0.035481296225023475
+  "rmse": 159.08811557098048,
+  "mae": 123.18364172616599,
+  "r2": 0.9042239509744633,
+  "mape": 0.05461858843266066
 }
 ```
 
@@ -303,15 +303,15 @@ LSTM is our best performing model with minimal errors after proper hypertuning. 
 Despite careful feature selection, as these models are more sensitive to feature perplexity caused by "the curse of dimensionality," both RNN and Linear Regression performed less optimally compared to LSTM.
 
 **RNN:**
-Even with the same basic features as LSTM, the RNN model was unable to extract as much meaningful temporal information.
+Even with the same basic features as LSTM, the RNN model was unable to extract as much meaningful temporal information but still displays a formidable performance.
 
 **Evaluation Metrics (RNN):**
 ```json
 {
-  "rmse": 310.90511607981733,
-  "mae": 195.645882905967,
-  "r2": 0.6342054930044944,
-  "mape": 0.07737790234768792
+  "rmse": 203.34756826849286,
+  "mae": 138.94628617603578,
+  "r2": 0.8435197941159692,
+  "mape": 0.05807819032603021
 }
 ```
 <div align="center">
@@ -386,7 +386,9 @@ For the boosted tree models (LGBM and CatBoost), the results are within a relati
 ### **Insights from LSTM**
 When feature importance is extracted from our most effective model (LSTM), "Year" seemingly emerges as one of the most impactful features. This suggests that as the year increases, the model's output tends towards a higher sales figure. While this factor is uncontrollable from a business practitioner's standpoint, it likely captures underlying trends, market growth, or long-term inflationary effects not fully encapsulated by other features.
 
-Otherwise, the presence of promotions also demonstrates a positive impact on product sales. Seasonality patterns, often peaking at the beginning of the year, show a more dramatic surge in sales compared to other periods. Furthermore, lagged sales features (e.g., sales patterns shifted back by at least 12 months) have a discernible impact on current sales. This resonates with the "importance" of the "Year" feature, as both point to strong temporal dependencies and trends.
+Otherwise, the presence of promotions also demonstrates a positive impact on product sales. Notably, in our neural network models (LSTM and RNN), the Budget_USD feature has emerged as a significant driver of sales predictions, appearing directly below Year in feature importance rankings. This indicates a proportional relationship between promotional budget and sales outcomes, suggesting that the sequential neural models are effectively capturing how promotional investments translate into revenue growth over time. This finding reinforces the value of properly structured marketing campaigns and highlights the importance of adequate promotional budgeting as a direct lever for sales performance.
+
+Seasonality patterns, often peaking at the beginning of the year, show a more dramatic surge in sales compared to other periods. Furthermore, lagged sales features (e.g., sales patterns shifted back by at least 12 months) have a discernible impact on current sales. This resonates with the "importance" of the "Year" feature, as both point to strong temporal dependencies and trends.
 
 <div align="center">
 
