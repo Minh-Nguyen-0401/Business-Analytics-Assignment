@@ -84,6 +84,9 @@ models/
 This repository is structured to facilitate a clear and reproducible machine learning workflow for sales forecasting. Here's a guide to the key components:
 
 - **`main.py`**: The main entry point to run the entire modeling pipeline. You can specify which models to run and other parameters via command-line arguments (see [Command-Line Interface](#command-line-interface) section).
+- **`collect_macro_indicators.py`**: Script to collect various macroeconomic indicators. Run this script to gather general economic data used as supplementary features.
+- **`extract_cpi.py`**: Script dedicated to extracting Consumer Price Index (CPI) data. This is used to provide specific inflation-related features.
+- **`extract_inflation_rate.py`**: Script for extracting inflation rate data, complementing the CPI data for a broader view of price changes.
 - **`src/`**: This directory houses the core Python modules for the project:
   - `ingest.py`: Handles loading of raw data.
   - `aggregate.py`: Performs feature aggregation and initial engineering.
@@ -98,50 +101,81 @@ This repository is structured to facilitate a clear and reproducible machine lea
   - Evaluation artifacts for each model, including metrics (e.g., `metrics.json`), plots (e.g., `actual_vs_predicted.png`), and feature importance/SHAP value plots.
 - **`original_data/` & `supplementary_data/`**: These folders should contain your input datasets. `original_data` is for primary sales and promotion data, while `supplementary_data` is for external data like macroeconomic indicators.
 - **`forecast_25.ipynb`**: A Jupyter notebook dedicated to the 2025 sales forecast. It includes the specific implementation, analysis, and insights derived for this future period.
-- **`EDA_compile.ipynb`** (to be added soon): This notebook will consolidate the complete Exploratory Data Analysis process, providing a comprehensive overview of data characteristics, patterns, and insights. *(Currently, `EDA_test.ipynb` contains preliminary EDA.)*
+- **`EDA_compile.ipynb`**: This notebook consolidates the complete Exploratory Data Analysis process, providing a comprehensive overview of data characteristics, patterns, and insights.
 - **`pipeline_model_eval.md`**: A detailed markdown document explaining the end-to-end model preparation, construction pipeline, and evaluation results. Refer to this for an in-depth understanding of the methodology.
 - **`log/`**: Stores log files generated during pipeline execution, useful for debugging and tracking.
 - **`docs/`**: Contains any additional project documentation if any.
+- **`personal_workspace`**: Contains individual notebooks of other team members for EDA.
 
 ## Repository Structure
 
 ```text
 .
-├── .env                         
-├── .gitignore                   
-├── README.md                    
-├── EDA_test.ipynb               
-├── EDA_compile.ipynb            
-├── forecast_25.ipynb            
-├── pipeline_model_eval.md       
-├── main.py                      
-├── requirements.txt             
-├── collect_macro_indicators.py  # Script to collect macroeconomic data
-├── extract_cpi.py               # Script to extract CPI data
-├── extract_inflation_rate.py    # Script to extract inflation rate data
-│
-├── docs/                        # Project documentation
-├── img/                         # Images used in documentation (e.g., pipeline diagrams)
-├── log/                         
-├── models/                      
-├── original_data/               
-├── supplementary_data/          
-│
-├── src/                         
+├── .env
+├── .gitignore
+├── EDA_compile.ipynb
+├── README.md
+├── collect_macro_indicators.py
+├── docs/
+│   └── Assignment 1 Requirement.docx
+├── extract_cpi.py
+├── extract_inflation_rate.py
+├── forecast_25.ipynb
+├── img/
+│   └── E2E_model_pipeline.png
+├── log/
+│   ├── collect_macro.log
+│   ├── extract_cpi.log
+│   └── extract_inflation.log
+├── main.py
+├── models/
+│   ├── catboost_evaluation/
+│   ├── catboost_model.pkl
+│   ├── lightgbm_evaluation/
+│   ├── lightgbm_model.pkl
+│   ├── linear_regression_evaluation/
+│   ├── linear_regression_model.pkl
+│   ├── lstm_2025_evaluation/
+│   ├── lstm_2025_model.pkl
+│   ├── lstm_evaluation/
+│   ├── lstm_model.pkl
+│   ├── rnn_evaluation/
+│   └── rnn_model.pkl
+├── original_data/
+│   ├── Promotion.csv
+│   └── Sales_Data.csv
+├── pipeline_model_eval.md
+├── pred_2025_data/
+│   ├── no_promo/
+│   ├── with_promo_scen1/
+│   ├── with_promo_scen2/
+│   ├── with_promo_scen3/
+│   └── with_promo_scen4/
+├── src/
 │   ├── __init__.py
-│   ├── aggregate.py             # Feature aggregation and engineering
-│   ├── config.yaml              # Pipeline configuration
-│   ├── hypertune.py             # Hyperparameter tuning with Optuna
-│   ├── hypertune_results.yaml   # Stores results from hyperparameter tuning
-│   ├── ingest.py                # Data ingestion from raw sources
-│   ├── preprocess.py            # Data preprocessing and transformation
-│   ├── search_space.yaml        # Defines hyperparameter search spaces
-│   └── train.py                 # Model training and evaluation
-│
-└── utils/                       
+│   ├── aggregate.py
+│   ├── config.yaml
+│   ├── hypertune.py
+│   ├── hypertune_results.yaml
+│   ├── ingest.py
+│   ├── log/
+│   ├── preprocess.py
+│   ├── search_space.yaml
+│   └── train.py
+├── supplementary_data/
+│   ├── casual_outerwear_avg_cpi.csv
+│   ├── casual_outerwear_inflation_rate.csv
+│   ├── collect_config.yaml
+│   ├── gold_data.csv
+│   ├── industry_data.csv
+│   ├── macro_data.csv
+│   └── rel_tickers_data.csv
+└── utils/
     ├── __init__.py
-    ├── feature_generation.py    # Functions for creating new features
-    └── helper_func.py           # General helper functions
+    ├── feature_generation.py
+    ├── helper_func.py
+    ├── multivariate_analysis_helper.py
+    └── univariate_analysis_helper.py
 ```
 
 ## Implementation Details
