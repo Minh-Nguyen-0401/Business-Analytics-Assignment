@@ -3,7 +3,7 @@ import warnings
 import re
 import argparse
 import yaml
-
+from statsmodels.tsa.seasonal import seasonal_decompose
 import pandas as pd
 
 from src.ingest import *
@@ -105,7 +105,8 @@ def run_neural_model(model_name, n_features, X_tr, y_tr, X_te, y_te, n_trials):
     org_df["Month"] = org_df.index.month.astype(str)
     org_df["Year"] = org_df.index.year
     org_df["Quarter"] = org_df.index.quarter.astype(str)
-    org_df["Half_Year"] = (org_df.index.month.astype(int)//6 + 1).astype(str)
+    # org_df["Half_Year"] = (org_df.index.month.astype(int)//6 + 1).astype(str)
+    # org_df["Seasonality_lag"] = seasonal_decompose(org_df["New_Sales"], model="additive", period=12).seasonal.shift(12)
     nn_X_tr, nn_y_tr, nn_X_te, nn_y_te = agg.split_train_test(org_df, target_feat="New_Sales")
 
     # Preprocess
