@@ -154,8 +154,12 @@ geometry: a4paper, margin=2cm
 | Promo Indicators | `has_promo`, `budget_to_sales`, ...          | Promotion effects                                   |
 
 ### 4.3 Leakage Guard
+
 - All features except promo indicators are **backshifted 12 months** (`force_backshift`).
-- First 12 rows dropped to prevent lookahead bias.
+- **Seasonal Decomposition Features for NNs:** For LSTM and RNN models, two new features were introduced which dramatically improved performance:
+  - `Trend_lag`: The trend component from a 12-period additive seasonal decomposition of `New_Sales`, shifted by 12 months. Calculated as `seasonal_decompose(org_df["New_Sales"], model="additive", period=12).trend.shift(12)`.
+  - `Residual_lag`: The residual component from the same seasonal decomposition, also shifted by 12 months. Calculated as `seasonal_decompose(org_df["New_Sales"], model="additive", period=12).resid.shift(12)`.
+- First 12 rows (or more, depending on lags) dropped to prevent lookahead bias.
 - Final features saved as `.agg_features`.
 
 ---
