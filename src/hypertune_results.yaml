@@ -264,8 +264,8 @@ results:
     - Quarter_2
     - New_Sales_lag_15
     params:
-      lr: 0.00617917647952249
-      units: 64
+      lr: 0.007814462810033205
+      units: 80
       batch_size: 16
       patience: 12
   rnn:
