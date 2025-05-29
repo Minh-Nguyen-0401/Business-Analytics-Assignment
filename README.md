@@ -47,7 +47,8 @@ cd Business-Analytics-Assignment
 
 # Install dependencies
 pip install -r requirements.txt
-or
+
+# Create a conda environment (optional)
 conda env create -f environment.yml
 ```
 
